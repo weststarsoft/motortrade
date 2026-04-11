@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Motor Trade — Veículos Premium</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700;800;900&family=Barlow+Condensed:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:      #111111;
+  --bg2:     #181818;
+  --bg3:     #1f1f1f;
+  --border:  rgba(255,255,255,0.08);
+  --border2: rgba(255,255,255,0.15);
+  --white:   #ffffff;
+  --gray:    #999999;
+  --gray2:   #555555;
+}
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; }
+body { background:var(--bg); color:var(--white); font-family:'Barlow',sans-serif; font-weight:400; overflow-x:hidden; }
+::-webkit-scrollbar{width:4px} ::-webkit-scrollbar-track{background:var(--bg)} ::-webkit-scrollbar-thumb{background:var(--gray2)}
+
+/* ══ HEADER ══ */
+header {
+  position:fixed; top:0; left:0; right:0; z-index:200;
+  height:64px; display:flex; align-items:center; justify-content:space-between;
+  padding:0 44px;
+  background:rgba(17,17,17,0.88); backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+}
+
+.header-brand {
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:20px; font-weight:800; letter-spacing:0.1em;
+  text-transform:uppercase; color:var(--white); text-decoration:none;
+}
+.header-brand span { color:var(--gray); font-weight:500; }
+
+nav {
+  position:absolute; left:50%; transform:translateX(-50%);
+  display:flex; align-items:center; gap:32px;
+}
+nav a {
+  font-size:11px; font-weight:600; letter-spacing:0.14em;
+  text-transform:uppercase; color:var(--gray); text-decoration:none;
+  transition:color .25s; white-space:nowrap;
+}
+nav a:hover { color:var(--white); }
+
+.header-right { display:flex; align-items:center; gap:16px; }
+.icon-btn {
+  background:none; border:none; color:var(--gray); cursor:pointer;
+  padding:8px; display:flex; align-items:center; transition:color .25s;
+}
+.icon-btn:hover { color:var(--white); }
+.btn-wpp-header {
+  display:flex; align-items:center; gap:8px;
+  background:#25D366; color:#000;
+  font-size:10px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase;
+  padding:8px 16px; border-radius:2px; text-decoration:none;
+  transition:opacity .25s;
+}
+.btn-wpp-header:hover { opacity:.85; }
+
+.btn-eletricos {
+  display:flex; align-items:center; gap:7px;
+  background:#aaff00; color:#000;
+  font-size:10px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase;
+  padding:8px 16px; border-radius:100px; text-decoration:none;
+  transition:background .25s, transform .2s;
+}
+.btn-eletricos:hover { background:#ccff44; transform:translateY(-1px); }
+
+/* ══ HERO CAROUSEL ══ */
+#hero {
+  position:relative; margin-top:64px;
+  height:62vh; min-height:420px; max-height:640px;
+  overflow:hidden;
+}
+
+.hero-slides { position:absolute; inset:0; }
+
+.hero-slide {
+  position:absolute; inset:0;
+  opacity:0; transition:opacity 1s ease;
+  display:flex; align-items:flex-end;
+}
+.hero-slide.active { opacity:1; z-index:1; }
+
+.hs-bg {
+  position:absolute; inset:0;
+  background-size:cover; background-position:center;
+  transform:scale(1.04);
+  transition:transform 8s ease;
+}
+.hero-slide.active .hs-bg { transform:scale(1); }
+
+.hs-overlay {
+  position:absolute; inset:0;
+  background: linear-gradient(to right, rgba(17,17,17,0.88) 35%, rgba(17,17,17,0.15) 75%),
+              linear-gradient(to top, rgba(17,17,17,0.9) 0%, transparent 45%);
+}
+
+.hs-content {
+  position:relative; z-index:2;
+  padding:0 56px 44px;
+}
+.hs-tag {
+  font-size:10px; font-weight:600; letter-spacing:0.22em;
+  text-transform:uppercase; color:var(--gray); margin-bottom:10px; display:block;
+}
+.hs-title {
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:clamp(40px,5.5vw,72px);
+  font-weight:800; text-transform:uppercase; line-height:.95;
+  margin-bottom:8px;
+}
+.hs-sub {
+  font-size:13px; color:var(--gray); font-weight:300;
+  margin-bottom:24px; letter-spacing:.02em;
+}
+.hs-info {
+  display:flex; gap:24px; margin-bottom:28px;
+}
+.hs-info span {
+  font-family:'Space Mono',monospace;
+  font-size:11px; color:var(--gray);
+}
+.hs-info strong { color:var(--white); }
+
+/* Carousel controls */
+.hero-controls {
+  position:absolute; bottom:28px; right:56px; z-index:10;
+  display:flex; align-items:center; gap:12px;
+}
+.hero-dots { display:flex; gap:8px; align-items:center; }
+.hero-dot {
+  width:6px; height:6px; border-radius:50%;
+  background:rgba(255,255,255,0.3); cursor:pointer;
+  transition:background .3s, width .3s; border:none;
+}
+.hero-dot.active { background:var(--white); width:22px; border-radius:3px; }
+
+.hero-arrow {
+  width:36px; height:36px; border-radius:50%;
+  border:1px solid rgba(255,255,255,0.25); background:rgba(17,17,17,0.5);
+  color:var(--white); cursor:pointer; display:flex; align-items:center; justify-content:center;
+  font-size:14px; transition:background .25s, border-color .25s;
+}
+.hero-arrow:hover { background:rgba(255,255,255,0.15); border-color:rgba(255,255,255,0.5); }
+
+/* ══ SEARCH ══ */
+#busca {
+  background:var(--bg2); padding:24px 56px;
+  border-bottom:1px solid var(--border);
+}
+.search-inner {
+  max-width:760px; margin:0 auto;
+  display:flex; align-items:stretch;
+  background:var(--bg3); border:1px solid var(--border2); border-radius:4px; overflow:hidden;
+  transition:border-color .3s;
+}
+.search-inner:focus-within { border-color:rgba(255,255,255,0.4); }
+.search-inner input {
+  flex:1; background:none; border:none; outline:none;
+  color:var(--white); font-family:'Barlow',sans-serif;
+  font-size:14px; font-weight:300; padding:13px 20px;
+}
+.search-inner input::placeholder { color:var(--gray2); }
+.search-inner button {
+  background:var(--white); border:none; cursor:pointer;
+  padding:13px 18px; color:#000; font-size:15px; transition:background .25s;
+}
+.search-inner button:hover { background:#ddd; }
+
+/* ══ SECTION COMMONS ══ */
+section { padding:80px 56px; }
+.sec-label {
+  font-size:10px; font-weight:600; letter-spacing:0.22em;
+  text-transform:uppercase; color:var(--gray); margin-bottom:8px; display:block;
+}
+.sec-title {
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:clamp(30px,3.5vw,46px);
+  font-weight:800; text-transform:uppercase; line-height:1;
+}
+
+/* ══ DESTAQUES ══ */
+#destaques { background:#e8e8e8; }
+
+.sec-header {
+  display:flex; justify-content:space-between; align-items:flex-end;
+  margin-bottom:40px;
+}
+.ver-todos {
+  font-size:11px; font-weight:600; letter-spacing:.12em; text-transform:uppercase;
+  color:var(--gray); text-decoration:none;
+  display:flex; align-items:center; gap:6px; transition:color .25s;
+}
+.ver-todos:hover { color:var(--white); }
+
+/* grid 4 cols */
+.cars-grid {
+  display:grid; grid-template-columns:repeat(4,1fr); gap:16px;
+}
+.cars-grid.two-col { grid-template-columns:repeat(3,1fr); }
+
+/* car card */
+.car-card {
+  background:var(--bg3); border-radius:12px; overflow:hidden; cursor:pointer;
+  border:1px solid var(--border);
+  transition:transform .4s cubic-bezier(.22,1,.36,1), box-shadow .4s, border-color .3s;
+}
+.car-card:hover {
+  transform:translateY(-8px);
+  box-shadow:0 20px 48px rgba(0,0,0,.55);
+  border-color:rgba(255,255,255,.2);
+}
+.car-card:hover .cc-img { transform:scale(1.05); }
+
+.cc-img-wrap { position:relative; aspect-ratio:16/11; overflow:hidden; background:#1a1a1a; }
+.cc-img-wrap .placeholder {
+  width:100%; height:100%;
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px;
+  color:var(--gray2); font-size:11px; letter-spacing:0.1em; text-transform:uppercase;
+}
+.cc-img-wrap .placeholder svg { opacity:0.3; }
+.cc-img {
+  width:100%; height:100%; object-fit:cover;
+  transition:transform .6s cubic-bezier(.22,1,.36,1);
+  filter:brightness(.88);
+}
+.cc-badge {
+  position:absolute; top:12px; left:12px;
+  background:var(--white); color:#000;
+  font-size:9px; font-weight:700; letter-spacing:.14em; text-transform:uppercase;
+  padding:3px 10px; border-radius:100px;
+}
+.cc-dots {
+  position:absolute; bottom:10px; left:50%; transform:translateX(-50%);
+  display:flex; gap:5px;
+}
+.cc-dot { width:5px; height:5px; border-radius:50%; background:rgba(255,255,255,.3); }
+.cc-dot.on { background:var(--white); }
+
+.cc-info { padding:18px 20px; }
+.cc-brand {
+  display:flex; align-items:center; gap:7px;
+  font-size:10px; font-weight:600; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--gray); margin-bottom:6px;
+}
+.cc-brand-dot { width:5px; height:5px; border-radius:50%; border:1px solid var(--gray2); }
+.cc-name {
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:20px; font-weight:700; text-transform:uppercase; line-height:1.1;
+  margin-bottom:10px;
+}
+.cc-meta {
+  font-family:'Space Mono',monospace;
+  font-size:10px; color:var(--gray); margin-bottom:14px; letter-spacing:.02em;
+  line-height:1.6;
+}
+.cc-footer {
+  display:flex; justify-content:space-between; align-items:center;
+  border-top:1px solid var(--border); padding-top:12px;
+}
+.cc-price {
+  font-family:'Space Mono',monospace;
+  font-size:14px; color:var(--white); font-weight:700;
+}
+.cc-btn {
+  background:none; border:1px solid var(--border2);
+  color:var(--gray); cursor:pointer; padding:6px 12px; border-radius:4px;
+  font-size:11px; font-family:'Barlow',sans-serif; font-weight:600;
+  transition:background .25s, color .25s, border-color .25s;
+}
+.cc-btn:hover { background:var(--white); color:#000; border-color:var(--white); }
+
+#destaques .car-card { background:var(--bg); border-color:rgba(0,0,0,0.1); }
+#destaques .car-card:hover { border-color:rgba(0,0,0,0.3); }
+#destaques .cc-footer { border-top-color:rgba(255,255,255,0.08); }
+#destaques .sec-header { margin-bottom:40px; }
+.section-divider {
+  height:1px; background:var(--border);
+  margin:0 56px;
+}
+
+/* ══ ESTOQUE GERAL ══ */
+#estoque { background:var(--bg); }
+
+/* ══ ABOUT ══ */
+#sobre { background:#e8e8e8; border-top:none; }
+.about-grid { display:grid; grid-template-columns:1fr 1fr; gap:72px; align-items:center; }
+.about-text .sec-title { margin-bottom:24px; }
+.about-text p { font-size:14px; line-height:1.85; color:var(--gray); font-weight:300; margin-bottom:16px; }
+.about-text p strong { color:var(--white); font-weight:600; }
+.about-nums { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:28px 0 32px; }
+.an-item { padding:16px 18px; border:1px solid var(--border); border-radius:8px; background:var(--bg3); }
+.an-num { font-family:'Space Mono',monospace; font-size:22px; font-weight:700; color:var(--white); margin-bottom:3px; }
+.an-label { font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:var(--gray); font-weight:500; }
+.about-img { width:100%; aspect-ratio:4/3; object-fit:cover; border-radius:12px; filter:brightness(.8) saturate(.8); }
+
+/* ══ BANNER ══ */
+#banner {
+  position:relative; height:340px; overflow:hidden;
+  display:flex; align-items:center;
+}
+.banner-bg {
+  position:absolute; inset:0;
+  background:
+    linear-gradient(to right, rgba(17,17,17,.93) 40%, rgba(17,17,17,.25) 100%),
+    #1a1a1a;
+}
+.banner-content {
+  position:relative; z-index:2; padding:0 80px; max-width:560px;
+}
+.banner-content .sec-label { margin-bottom:14px; }
+.banner-content .sec-title { margin-bottom:14px; }
+.banner-content p { font-size:14px; color:var(--gray); line-height:1.7; margin-bottom:28px; font-weight:300; }
+
+/* ══ LOCATION ══ */
+#localizacao { background:#e8e8e8; }
+.loc-grid { display:grid; grid-template-columns:1fr 1.2fr; gap:56px; align-items:start; }
+.loc-info .sec-title { margin-bottom:24px; }
+.loc-details { border:1px solid var(--border); border-radius:8px; overflow:hidden; margin-bottom:24px; }
+.loc-row { display:flex; gap:16px; align-items:flex-start; padding:18px 22px; border-bottom:1px solid var(--border); }
+.loc-row:last-child { border-bottom:none; }
+.loc-icon { width:34px; height:34px; flex-shrink:0; border:1px solid var(--border2); border-radius:6px; display:flex; align-items:center; justify-content:center; color:var(--gray); }
+.loc-row-content strong { display:block; font-size:10px; letter-spacing:.14em; text-transform:uppercase; color:var(--white); margin-bottom:4px; font-weight:600; }
+.loc-row-content p { font-size:13px; color:var(--gray); line-height:1.6; font-weight:300; }
+.loc-map { border-radius:12px; overflow:hidden; border:1px solid var(--border); aspect-ratio:16/11; }
+.loc-map iframe { width:100%; height:100%; border:none; filter:grayscale(100%) invert(95%) contrast(85%) brightness(.75) hue-rotate(180deg); }
+
+/* ══ SOCIAL ══ */
+#redes {
+  background:var(--bg); padding:56px;
+  border-top:1px solid var(--border);
+  display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:28px;
+}
+.redes-text h3 {
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:26px; font-weight:800; text-transform:uppercase; margin-bottom:4px;
+}
+.redes-text p { font-size:13px; color:var(--gray); font-weight:300; }
+.redes-links { display:flex; gap:12px; }
+.soc-link {
+  display:flex; align-items:center; gap:8px;
+  border:1px solid var(--border2); border-radius:6px; padding:11px 18px;
+  font-size:11px; font-weight:600; letter-spacing:.1em; text-transform:uppercase;
+  color:var(--gray); text-decoration:none;
+  transition:border-color .25s, color .25s, transform .25s;
+}
+.soc-link svg { width:15px; height:15px; fill:currentColor; }
+.soc-link:hover { border-color:var(--white); color:var(--white); transform:translateY(-3px); }
+
+/* ══ CTA ══ */
+#cta {
+  background:var(--bg2); padding:96px 56px; text-align:center;
+  border-top:1px solid var(--border); position:relative; overflow:hidden;
+}
+.cta-glow {
+  position:absolute; bottom:-100px; left:50%; transform:translateX(-50%);
+  width:500px; height:250px;
+  background:radial-gradient(ellipse, rgba(255,255,255,.04) 0%, transparent 70%);
+  pointer-events:none;
+}
+#cta .sec-label { display:flex; justify-content:center; margin-bottom:14px; }
+#cta .sec-title { font-size:clamp(34px,5vw,60px); margin-bottom:18px; }
+#cta p { font-size:14px; color:var(--gray); margin-bottom:40px; font-weight:300; }
+.cta-btns { display:flex; gap:14px; justify-content:center; flex-wrap:wrap; }
+
+/* ══ FOOTER ══ */
+footer {
+  background:var(--bg); border-top:1px solid var(--border);
+  padding:52px 56px 28px;
+}
+.footer-top {
+  display:grid; grid-template-columns:2fr 1fr 1fr 1fr;
+  gap:44px; margin-bottom:40px;
+}
+.footer-brand-name {
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:22px; font-weight:800; letter-spacing:.08em; text-transform:uppercase;
+  color:var(--white); margin-bottom:14px; display:block;
+}
+.footer-brand-name span { color:var(--gray); font-weight:500; }
+.footer-brand p { font-size:12px; color:var(--gray2); line-height:1.7; font-weight:300; max-width:250px; }
+.fc h4 { font-size:10px; font-weight:700; letter-spacing:.16em; text-transform:uppercase; color:var(--white); margin-bottom:16px; }
+.fc a { display:block; font-size:12px; color:var(--gray2); text-decoration:none; margin-bottom:9px; font-weight:300; transition:color .25s; }
+.fc a:hover { color:var(--white); }
+.footer-bottom {
+  border-top:1px solid var(--border); padding-top:22px;
+  display:flex; justify-content:space-between; align-items:center;
+  font-size:11px; color:var(--gray2); letter-spacing:.06em;
+}
+
+/* ══ BUTTONS ══ */
+.btn-pill {
+  display:inline-flex; align-items:center; gap:9px;
+  background:var(--white); color:#000;
+  font-size:11px; font-weight:700; letter-spacing:.14em; text-transform:uppercase;
+  padding:12px 26px; border-radius:100px; text-decoration:none;
+  transition:background .25s, transform .2s;
+}
+.btn-pill:hover { background:#ddd; transform:translateY(-2px); }
+.btn-pill-outline {
+  display:inline-flex; align-items:center; gap:9px;
+  border:1px solid rgba(255,255,255,.3); color:var(--white);
+  font-size:11px; font-weight:700; letter-spacing:.14em; text-transform:uppercase;
+  padding:12px 26px; border-radius:100px; text-decoration:none;
+  transition:border-color .25s, transform .2s;
+}
+.btn-pill-outline:hover { border-color:var(--white); transform:translateY(-2px); }
+
+/* ══ REVEAL ══ */
+.reveal { opacity:1; transform:none; transition:opacity .7s cubic-bezier(.22,1,.36,1), transform .7s cubic-bezier(.22,1,.36,1); }
+.reveal.animate { opacity:0; transform:translateY(24px); }
+.reveal.animate.visible { opacity:1; transform:none; }
+
+/* ══ LIGHT SECTION OVERRIDES — force all text colors ══ */
+#destaques, #sobre, #localizacao {
+  color: #111;
+}
+#destaques .sec-label,
+#sobre .sec-label,
+#localizacao .sec-label { color: #666 !important; }
+
+#destaques .sec-title,
+#sobre .sec-title,
+#localizacao .sec-title { color: #111 !important; }
+
+#destaques .ver-todos { color: #777 !important; }
+#destaques .ver-todos:hover { color: #111 !important; }
+
+#sobre .about-text p { color: #555 !important; }
+#sobre .about-text p strong { color: #111 !important; }
+#sobre .an-item { background: #d4d4d4 !important; border-color: rgba(0,0,0,0.1) !important; }
+#sobre .an-num { color: #111 !important; }
+#sobre .an-label { color: #555 !important; }
+
+#localizacao .loc-row-content strong { color: #111 !important; }
+#localizacao .loc-row-content p { color: #555 !important; }
+#localizacao .loc-details { background: #fff !important; border-color: rgba(0,0,0,0.12) !important; }
+#localizacao .loc-row { border-bottom-color: rgba(0,0,0,0.08) !important; }
+#localizacao .loc-icon { border-color: rgba(0,0,0,0.18) !important; color: #555 !important; }
+#localizacao .loc-map { border-color: rgba(0,0,0,0.12) !important; }
+
+/* ══ WPP FLOAT ══ */
+.wpp-float {
+  position:fixed; bottom:28px; right:28px; z-index:300;
+  width:52px; height:52px; border-radius:50%; background:#25D366;
+  display:flex; align-items:center; justify-content:center;
+  box-shadow:0 4px 20px rgba(37,211,102,.35); text-decoration:none;
+  transition:transform .3s, box-shadow .3s;
+}
+.wpp-float:hover { transform:scale(1.1); box-shadow:0 8px 32px rgba(37,211,102,.5); }
+.wpp-float svg { width:25px; height:25px; fill:#000; }
+
+/* ══ RESPONSIVE ══ */
+@media(max-width:1100px){ .cars-grid{grid-template-columns:repeat(2,1fr);} }
+@media(max-width:800px){
+  header{padding:0 20px;}
+  nav{display:none;}
+  section{padding:60px 20px;}
+  #busca{padding:18px 20px;}
+  .hs-content{padding:0 24px 36px;}
+  .cars-grid{grid-template-columns:1fr;}
+  .about-grid,.loc-grid,.footer-top{grid-template-columns:1fr;}
+  #redes{flex-direction:column; align-items:flex-start; padding:40px 20px;}
+  footer{padding:40px 20px 24px;}
+  .footer-bottom{flex-direction:column; gap:8px; text-align:center;}
+  .banner-content{padding:0 24px;}
+  #banner{height:auto; padding:60px 0;}
+  .hero-controls{right:24px;}
+}
+</style>
+</head>
+<body>
+
+<!-- WPP Float -->
+<a href="https://wa.me/5551999999999" class="wpp-float" target="_blank">
+  <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+</a>
+
+<!-- ══ HEADER ══ -->
+<header id="header">
+  <a href="#" class="header-brand">Motor <span>Trade</span></a>
+
+  <nav>
+    <a href="#destaques">Destaques</a>
+    <a href="#estoque">Veículos</a>
+    <a href="#sobre">Sobre Nós</a>
+    <a href="#localizacao">Localização</a>
+    <a href="#cta">Contato</a>
+  </nav>
+
+  <div class="header-right">
+    <button class="icon-btn" onclick="document.getElementById('busca').scrollIntoView({behavior:'smooth'})">
+      <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    </button>
+    <a href="eletricos.html" class="btn-eletricos">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="#000"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+      Elétricos
+    </a>
+    <a href="https://wa.me/5551999999999" class="btn-wpp-header" target="_blank">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      Fale no WhatsApp
+    </a>
+  </div>
+</header>
+
+<!-- ══ HERO CAROUSEL ══ -->
+<div id="hero">
+  <div class="hero-slides">
+
+    <!-- Slide 1 -->
+    <div class="hero-slide active" data-index="0">
+      <div class="hs-bg" style="background-color:#1a1a1a;"></div>
+      <div class="hs-overlay"></div>
+      <div class="hs-content">
+        <span class="hs-tag">Destaque da semana</span>
+        <div class="hs-title">Porsche 911<br>Carrera S</div>
+        <div class="hs-info">
+          <span><strong>Ano</strong> 2020</span>
+          <span><strong>KM</strong> 21.000</span>
+          <span><strong>Motor</strong> 3.0 Turbo</span>
+        </div>
+        <div style="display:flex;gap:12px;">
+          <a href="#destaques" class="btn-pill">Ver detalhes →</a>
+          <a href="https://wa.me/5551999999999" class="btn-pill-outline" target="_blank">Consultar preço</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 2 -->
+    <div class="hero-slide" data-index="1">
+      <div class="hs-bg" style="background-color:#1a1a1a;"></div>
+      <div class="hs-overlay"></div>
+      <div class="hs-content">
+        <span class="hs-tag">Novo no estoque</span>
+        <div class="hs-title">BMW X3 M50<br>Turbo Híbrido</div>
+        <div class="hs-info">
+          <span><strong>Ano</strong> 2026</span>
+          <span><strong>KM</strong> 7.000</span>
+          <span><strong>Motor</strong> Híbrido</span>
+        </div>
+        <div style="display:flex;gap:12px;">
+          <a href="#destaques" class="btn-pill">Ver detalhes →</a>
+          <a href="https://wa.me/5551999999999" class="btn-pill-outline" target="_blank">Consultar preço</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 3 -->
+    <div class="hero-slide" data-index="2">
+      <div class="hs-bg" style="background-color:#1a1a1a;"></div>
+      <div class="hs-overlay"></div>
+      <div class="hs-content">
+        <span class="hs-tag">Destaque Motor Trade</span>
+        <div class="hs-title">Audi RS5</div>
+        <div class="hs-info">
+          <span><strong>Ano</strong> 2018</span>
+          <span><strong>KM</strong> 22.000</span>
+          <span><strong>Motor</strong> V6 2.9 Biturbo</span>
+        </div>
+        <div style="display:flex;gap:12px;">
+          <a href="#destaques" class="btn-pill">Ver detalhes →</a>
+          <a href="https://wa.me/5551999999999" class="btn-pill-outline" target="_blank">Consultar preço</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Controls -->
+  <div class="hero-controls">
+    <button class="hero-arrow" id="prevBtn">&#8592;</button>
+    <div class="hero-dots" id="heroDots">
+      <button class="hero-dot active" data-dot="0"></button>
+      <button class="hero-dot" data-dot="1"></button>
+      <button class="hero-dot" data-dot="2"></button>
+    </div>
+    <button class="hero-arrow" id="nextBtn">&#8594;</button>
+  </div>
+</div>
+
+<!-- ══ SEARCH ══ -->
+<div id="busca">
+  <div class="search-inner">
+    <input type="text" placeholder="Busque por modelo, marca ou ano…">
+    <button>
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    </button>
+  </div>
+</div>
+
+<!-- ══ DESTAQUES ══ -->
+<section id="destaques">
+  <div class="sec-header reveal">
+    <div>
+      <span class="sec-label">Seleção especial</span>
+      <h2 class="sec-title">Destaques</h2>
+    </div>
+    <a href="#estoque" class="ver-todos">Ver estoque completo →</a>
+  </div>
+
+  <div class="cars-grid">
+    <div class="car-card reveal">
+      <div class="cc-img-wrap">
+        <div class="placeholder">
+          <svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          Inserir foto
+        </div>
+        <div class="cc-badge">Destaque</div>
+        <div class="cc-dots"><div class="cc-dot on"></div><div class="cc-dot"></div><div class="cc-dot"></div></div>
+      </div>
+      <div class="cc-info">
+        <div class="cc-brand"><div class="cc-brand-dot"></div>Porsche</div>
+        <div class="cc-name">911 Carrera S</div>
+        <div class="cc-meta">KM: 21.000 &nbsp;·&nbsp; Ano: 2020 &nbsp;·&nbsp; Gasolina</div>
+        <div class="cc-footer">
+          <div class="cc-price">R$ 699.900</div>
+          <button class="cc-btn">Detalhes →</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="car-card reveal">
+      <div class="cc-img-wrap">
+        <div class="placeholder">
+          <svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          Inserir foto
+        </div>
+        <div class="cc-badge">Novo</div>
+        <div class="cc-dots"><div class="cc-dot on"></div><div class="cc-dot"></div><div class="cc-dot"></div></div>
+      </div>
+      <div class="cc-info">
+        <div class="cc-brand"><div class="cc-brand-dot"></div>BMW</div>
+        <div class="cc-name">X3 M50 Turbo Híbrido</div>
+        <div class="cc-meta">KM: 7.000 &nbsp;·&nbsp; Ano: 2026 &nbsp;·&nbsp; Híbrido</div>
+        <div class="cc-footer">
+          <div class="cc-price">R$ 589.900</div>
+          <button class="cc-btn">Detalhes →</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="car-card reveal">
+      <div class="cc-img-wrap">
+        <div class="placeholder">
+          <svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          Inserir foto
+        </div>
+        <div class="cc-dots"><div class="cc-dot on"></div><div class="cc-dot"></div><div class="cc-dot"></div></div>
+      </div>
+      <div class="cc-info">
+        <div class="cc-brand"><div class="cc-brand-dot"></div>Audi</div>
+        <div class="cc-name">RS5</div>
+        <div class="cc-meta">KM: 22.000 &nbsp;·&nbsp; Ano: 2018 &nbsp;·&nbsp; V6 2.9 Biturbo</div>
+        <div class="cc-footer">
+          <div class="cc-price">Consulte</div>
+          <button class="cc-btn">Detalhes →</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="car-card reveal">
+      <div class="cc-img-wrap">
+        <div class="placeholder">
+          <svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          Inserir foto
+        </div>
+        <div class="cc-badge">Blindado</div>
+        <div class="cc-dots"><div class="cc-dot on"></div><div class="cc-dot"></div><div class="cc-dot"></div></div>
+      </div>
+      <div class="cc-info">
+        <div class="cc-brand"><div class="cc-brand-dot"></div>Mercedes-Benz</div>
+        <div class="cc-name">Panamera 4 Blindado</div>
+        <div class="cc-meta">KM: 32.000 &nbsp;·&nbsp; Ano: 2018 &nbsp;·&nbsp; Gasolina</div>
+        <div class="cc-footer">
+          <div class="cc-price">R$ 489.900</div>
+          <button class="cc-btn">Detalhes →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ══ ESTOQUE GERAL ══ -->
+<section id="estoque">
+  <div class="sec-header reveal">
+    <div>
+      <span class="sec-label">Todos os veículos</span>
+      <h2 class="sec-title">Carros em Estoque</h2>
+    </div>
+    <a href="#cta" class="ver-todos">Não encontrou? Fale conosco →</a>
+  </div>
+
+  <div class="cars-grid">
+    <div class="car-card reveal">
+      <div class="cc-img-wrap">
+        <div class="placeholder">
+          <svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          Inserir foto
+        </div>
+        <div class="cc-dots"><div class="cc-dot on"></div><div class="cc-dot"></div><div class="cc-dot"></div></div>
+      </div>
+      <div class="cc-info">
+        <div class="cc-brand"><div class="cc-brand-dot"></div>Audi</div>
+        <div class="cc-name">RS5 Sportback</div>
+        <div class="cc-meta">KM: 14.000 &nbsp;·&nbsp; Ano: 2022 &nbsp;·&nbsp; Gasolina</div>
+        <div class="cc-footer">
+          <div class="cc-price">R$ 469.900</div>
+          <button class="cc-btn">Detalhes →</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="car-card reveal">
+      <div class="cc-img-wrap">
+        <div class="placeholder">
+          <svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          Inserir foto
+        </div>
+        <div class="cc-dots"><div class="cc-dot on"></div><div class="cc-dot"></div><div class="cc-dot"></div></div>
+      </div>
+      <div class="cc-info">
+        <div class="cc-brand"><div class="cc-brand-dot"></div>Lamborghini</div>
+        <div class="cc-name">Urus S</div>
+        <div class="cc-meta">KM: 9.300 &nbsp;·&nbsp; Ano: 2022 &nbsp;·&nbsp; Gasolina</div>
+        <div class="cc-footer">
+          <div class="cc-price">R$ 1.850.000</div>
+          <button class="cc-btn">Detalhes →</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="car-card reveal">
+      <div class="cc-img-wrap">
+        <div class="placeholder">
+          <svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          Inserir foto
+        </div>
+        <div class="cc-badge">Exclusivo</div>
+        <div class="cc-dots"><div class="cc-dot on"></div><div class="cc-dot"></div><div class="cc-dot"></div></div>
+      </div>
+      <div class="cc-info">
+        <div class="cc-brand"><div class="cc-brand-dot"></div>Ferrari</div>
+        <div class="cc-name">Roma Spider</div>
+        <div class="cc-meta">KM: 4.200 &nbsp;·&nbsp; Ano: 2023 &nbsp;·&nbsp; Gasolina</div>
+        <div class="cc-footer">
+          <div class="cc-price">R$ 2.100.000</div>
+          <button class="cc-btn">Detalhes →</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="car-card reveal">
+      <div class="cc-img-wrap">
+        <div class="placeholder">
+          <svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          Inserir foto
+        </div>
+        <div class="cc-dots"><div class="cc-dot on"></div><div class="cc-dot"></div><div class="cc-dot"></div></div>
+      </div>
+      <div class="cc-info">
+        <div class="cc-brand"><div class="cc-brand-dot"></div>Porsche</div>
+        <div class="cc-name">Cayenne Turbo GT</div>
+        <div class="cc-meta">KM: 6.800 &nbsp;·&nbsp; Ano: 2023 &nbsp;·&nbsp; Gasolina</div>
+        <div class="cc-footer">
+          <div class="cc-price">R$ 980.000</div>
+          <button class="cc-btn">Detalhes →</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="car-card reveal">
+      <div class="cc-img-wrap">
+        <div class="placeholder">
+          <svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          Inserir foto
+        </div>
+        <div class="cc-dots"><div class="cc-dot on"></div><div class="cc-dot"></div><div class="cc-dot"></div></div>
+      </div>
+      <div class="cc-info">
+        <div class="cc-brand"><div class="cc-brand-dot"></div>BMW</div>
+        <div class="cc-name">M5 Competition</div>
+        <div class="cc-meta">KM: 18.000 &nbsp;·&nbsp; Ano: 2022 &nbsp;·&nbsp; Gasolina</div>
+        <div class="cc-footer">
+          <div class="cc-price">R$ 660.000</div>
+          <button class="cc-btn">Detalhes →</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="car-card reveal">
+      <div class="cc-img-wrap">
+        <div class="placeholder">
+          <svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          Inserir foto
+        </div>
+        <div class="cc-dots"><div class="cc-dot on"></div><div class="cc-dot"></div><div class="cc-dot"></div></div>
+      </div>
+      <div class="cc-info">
+        <div class="cc-brand"><div class="cc-brand-dot"></div>Bentley</div>
+        <div class="cc-name">Continental GT</div>
+        <div class="cc-meta">KM: 12.000 &nbsp;·&nbsp; Ano: 2021 &nbsp;·&nbsp; Gasolina</div>
+        <div class="cc-footer">
+          <div class="cc-price">R$ 1.480.000</div>
+          <button class="cc-btn">Detalhes →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ ABOUT ══ -->
+<section id="sobre">
+  <div class="about-grid">
+    <div class="about-text reveal">
+      <span class="sec-label">Sobre a Motor Trade</span>
+      <h2 class="sec-title">Referência em<br>veículos premium</h2>
+      <div class="about-nums">
+        <div class="an-item"><div class="an-num">12+</div><div class="an-label">Anos de mercado</div></div>
+        <div class="an-item"><div class="an-num">500+</div><div class="an-label">Veículos vendidos</div></div>
+        <div class="an-item"><div class="an-num">100%</div><div class="an-label">Procedência</div></div>
+        <div class="an-item"><div class="an-num">5★</div><div class="an-label">Avaliação clientes</div></div>
+      </div>
+      <p>A <strong>Motor Trade</strong> é especializada na compra e venda de veículos premium em Porto Alegre. Cada carro passa por rigorosa inspeção técnica, com procedência e documentação verificadas.</p>
+      <p>Financiamento facilitado, avaliação do seu usado e atendimento personalizado para você encontrar o carro ideal.</p>
+      <a href="#cta" class="btn-pill" style="margin-top:20px;">Saiba mais →</a>
+    </div>
+    <div class="reveal">
+      <div style="width:100%;aspect-ratio:4/3;background:#1a1a1a;border-radius:12px;display:flex;align-items:center;justify-content:center;color:#333;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;flex-direction:column;gap:8px;"><svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" style="opacity:0.3"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>Inserir foto</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ BANNER ══ -->
+<div id="banner">
+  <div class="banner-bg"></div>
+  <div class="banner-content reveal">
+    <span class="sec-label">Compra e venda</span>
+    <h2 class="sec-title">Quer vender<br>seu veículo?</h2>
+    <p>Avaliamos com transparência e as melhores condições do mercado. Rápido, seguro e sem burocracia.</p>
+    <a href="https://wa.me/5551999999999" class="btn-pill" target="_blank">Falar no WhatsApp →</a>
+  </div>
+</div>
+
+<!-- ══ LOCATION ══ -->
+<section id="localizacao">
+  <div class="loc-grid">
+    <div class="loc-info reveal">
+      <span class="sec-label">Visite Nossa Loja</span>
+      <h2 class="sec-title">Encontre-nos em<br>Porto Alegre</h2><br>
+      <div class="loc-details">
+        <div class="loc-row">
+          <div class="loc-icon"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+          <div class="loc-row-content">
+            <strong>Endereço</strong>
+            <p>Rua 18 de novembro, 135 — Navegantes<br>CEP 90240-040 — Porto Alegre/RS</p>
+          </div>
+        </div>
+        <div class="loc-row">
+          <div class="loc-icon"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+          <div class="loc-row-content">
+            <strong>Horário de Funcionamento</strong>
+            <p>Seg a Sex: 9h às 19h &nbsp;|&nbsp; Sáb: 9h às 17h<br>Domingo: Fechado</p>
+          </div>
+        </div>
+        <div class="loc-row">
+          <div class="loc-icon"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013 6.18 2 2 0 014.11 4.13l3.09-.78a1 1 0 011.07.5l1.38 3.09a1 1 0 01-.29 1.17L8 9.22A16 16 0 0014.78 16l1.11-1.36a1 1 0 011.17-.29l3.09 1.38a1 1 0 01.85 1.19z"/></svg></div>
+          <div class="loc-row-content">
+            <strong>WhatsApp</strong>
+            <p>(51) 9 9999-9999</p>
+          </div>
+        </div>
+      </div>
+      <a href="https://maps.google.com/?q=Rua+18+de+novembro+135+Porto+Alegre" class="btn-pill" target="_blank">Ver no Google Maps →</a>
+    </div>
+    <div class="loc-map reveal">
+      <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3452.8!2d-51.2177!3d-30.0277!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x951977b7a55e1853%3A0x68a0e9b3d7b5b7b!2sRua%2018%20de%20Novembro%2C%20135%20-%20Navegantes%2C%20Porto%20Alegre%20-%20RS!5e0!3m2!1spt-BR!2sbr!4v1600000000000"
+        allowfullscreen="" loading="lazy" title="Motor Trade"></iframe>
+    </div>
+  </div>
+</section>
+
+<!-- ══ SOCIAL ══ -->
+<div id="redes">
+  <div class="redes-text reveal">
+    <h3>Siga a Motor Trade</h3>
+    <p>Acompanhe novidades, lançamentos e bastidores</p>
+  </div>
+  <div class="redes-links reveal">
+    <a href="#" class="soc-link"><svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>Instagram</a>
+    <a href="https://wa.me/5551999999999" class="soc-link" target="_blank"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>WhatsApp</a>
+    <a href="#" class="soc-link"><svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>Facebook</a>
+  </div>
+</div>
+
+<!-- ══ CTA ══ -->
+<section id="cta">
+  <div class="cta-glow"></div>
+  <span class="sec-label reveal">Motor Trade Premium</span>
+  <h2 class="sec-title reveal">Encontre o carro ideal<br>com quem entende</h2>
+  <p class="reveal">Atendimento especializado, estoque selecionado e as melhores condições em Porto Alegre.</p>
+  <div class="cta-btns reveal">
+    <a href="https://wa.me/5551999999999" class="btn-pill" target="_blank">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      Entrar em Contato
+    </a>
+    <a href="#estoque" class="btn-pill-outline">Ver Estoque Completo</a>
+  </div>
+</section>
+
+<!-- ══ FOOTER ══ -->
+<footer>
+  <div class="footer-top">
+    <div class="footer-brand">
+      <span class="footer-brand-name">Motor <span>Trade</span></span>
+      <p>Especialistas em veículos premium em Porto Alegre. Compra, venda e financiamento com total segurança.</p>
+    </div>
+    <div class="fc">
+      <h4>Navegação</h4>
+      <a href="#destaques">Destaques</a>
+      <a href="#estoque">Veículos</a>
+      <a href="#sobre">Sobre Nós</a>
+      <a href="#localizacao">Localização</a>
+      <a href="#cta">Contato</a>
+    </div>
+    <div class="fc">
+      <h4>Contato</h4>
+      <a href="tel:+5551999999999">(51) 9 9999-9999</a>
+      <a href="/cdn-cgi/l/email-protection#5a3935342e3b2e351a37352e35282e283b3e3f74393537743828"><span class="__cf_email__" data-cfemail="1f7c70716b7e6b705f72706b706d6b6d7e7b7a317c7072317d6d">[email&#160;protected]</span></a>
+      <a href="#">Rua 18 de novembro, 135</a>
+      <a href="#">Navegantes — Porto Alegre/RS</a>
+    </div>
+    <div class="fc">
+      <h4>Redes Sociais</h4>
+      <a href="#">Instagram</a>
+      <a href="#">WhatsApp</a>
+      <a href="#">Facebook</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2025 Motor Trade. Todos os direitos reservados.</span>
+    <span>Porto Alegre/RS — Brasil</span>
+  </div>
+</footer>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+// ── Carousel ──
+const slides = document.querySelectorAll('.hero-slide');
+const dots   = document.querySelectorAll('.hero-dot');
+let current  = 0;
+let timer;
+
+function goTo(n) {
+  slides[current].classList.remove('active');
+  dots[current].classList.remove('active');
+  current = (n + slides.length) % slides.length;
+  slides[current].classList.add('active');
+  dots[current].classList.add('active');
+  resetTimer();
+}
+
+function resetTimer() {
+  clearInterval(timer);
+  timer = setInterval(() => goTo(current + 1), 5000);
+}
+
+document.getElementById('nextBtn').addEventListener('click', () => goTo(current + 1));
+document.getElementById('prevBtn').addEventListener('click', () => goTo(current - 1));
+dots.forEach(d => d.addEventListener('click', () => goTo(+d.dataset.dot)));
+resetTimer();
+
+// ── Scroll reveal ── add animate via JS so static preview shows content
+const revealEls = document.querySelectorAll('.reveal');
+revealEls.forEach(r => r.classList.add('animate'));
+const io = new IntersectionObserver((entries) => {
+  entries.forEach((e, i) => {
+    if (e.isIntersecting) {
+      e.target.style.transitionDelay = (i % 4 * 0.07) + 's';
+      e.target.classList.add('visible');
+      io.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.1 });
+revealEls.forEach(r => io.observe(r));
+</script>
+</body>
+</html>
