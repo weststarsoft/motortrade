@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Motor Trade — Elétricos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700;800;900&family=Barlow+Condensed:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:      #0e0e0e;
+  --bg2:     #161616;
+  --bg3:     #1e1e1e;
+  --border:  rgba(255,255,255,0.07);
+  --border2: rgba(255,255,255,0.14);
+  --white:   #ffffff;
+  --gray:    #999;
+  --gray2:   #555;
+  --green:   #aaff00;
+  --green2:  #ccff44;
+}
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body { background:var(--bg); color:var(--white); font-family:'Barlow',sans-serif; overflow-x:hidden; }
+::-webkit-scrollbar{width:4px} ::-webkit-scrollbar-track{background:var(--bg)} ::-webkit-scrollbar-thumb{background:var(--gray2)}
+
+/* ══ HEADER ══ */
+header {
+  position:fixed; top:0; left:0; right:0; z-index:200;
+  height:64px; display:flex; align-items:center; justify-content:space-between;
+  padding:0 44px;
+  background:rgba(14,14,14,0.92); backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+}
+.header-logo img { height:38px; width:auto; }
+.header-logo-text {
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:20px; font-weight:800; letter-spacing:0.1em;
+  text-transform:uppercase; color:var(--white); text-decoration:none;
+}
+.header-logo-text span { color:var(--gray); font-weight:500; }
+
+.header-center {
+  position:absolute; left:50%; transform:translateX(-50%);
+  display:flex; align-items:center; gap:8px;
+}
+.elec-badge {
+  display:flex; align-items:center; gap:7px;
+  background:var(--green); color:#000;
+  font-size:11px; font-weight:800; letter-spacing:0.16em; text-transform:uppercase;
+  padding:7px 16px; border-radius:100px;
+}
+.elec-badge svg { width:13px; height:13px; fill:#000; }
+.header-sub {
+  font-size:11px; font-weight:500; letter-spacing:0.1em;
+  text-transform:uppercase; color:var(--gray);
+}
+
+.header-right { display:flex; align-items:center; gap:14px; }
+.btn-back {
+  display:flex; align-items:center; gap:7px;
+  border:1px solid var(--border2); border-radius:100px;
+  padding:8px 16px; font-size:10px; font-weight:700;
+  letter-spacing:0.12em; text-transform:uppercase;
+  color:var(--gray); text-decoration:none;
+  transition:border-color .25s, color .25s;
+}
+.btn-back:hover { border-color:var(--white); color:var(--white); }
+.btn-wpp {
+  display:flex; align-items:center; gap:7px;
+  background:#25D366; color:#000;
+  font-size:10px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase;
+  padding:8px 16px; border-radius:2px; text-decoration:none;
+  transition:opacity .25s;
+}
+.btn-wpp:hover { opacity:.85; }
+
+/* ══ HERO BANNER ══ */
+#hero {
+  margin-top:64px;
+  position:relative;
+  height:44vh; min-height:320px; max-height:480px;
+  overflow:hidden; display:flex; align-items:flex-end;
+}
+.hero-bg {
+  position:absolute; inset:0;
+  background:#1a1a1a;
+  /* substitua pela imagem: background-image:url('images/hero-eletrico.jpg'); background-size:cover; background-position:center; */
+}
+.hero-overlay {
+  position:absolute; inset:0;
+  background:
+    linear-gradient(to right, rgba(14,14,14,0.92) 35%, rgba(14,14,14,0.2) 75%),
+    linear-gradient(to top, rgba(14,14,14,0.95) 0%, transparent 50%);
+}
+.hero-content {
+  position:relative; z-index:2;
+  padding:0 56px 44px;
+  display:flex; align-items:flex-end; justify-content:space-between;
+  width:100%;
+}
+.hero-left {}
+.hero-tag {
+  display:flex; align-items:center; gap:8px;
+  font-size:10px; font-weight:700; letter-spacing:0.2em;
+  text-transform:uppercase; color:var(--green);
+  margin-bottom:10px;
+}
+.hero-tag svg { width:12px; height:12px; fill:var(--green); }
+.hero-title {
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:clamp(36px,5vw,64px);
+  font-weight:800; text-transform:uppercase;
+  line-height:.95; margin-bottom:16px;
+}
+.hero-title span { color:var(--green); }
+.hero-sub {
+  font-size:13px; color:var(--gray); font-weight:300;
+  max-width:380px; line-height:1.6;
+}
+.hero-stats {
+  display:flex; gap:32px; padding-bottom:4px;
+}
+.hs-item { text-align:right; }
+.hs-num {
+  font-family:'Space Mono',monospace;
+  font-size:28px; font-weight:700; color:var(--green); line-height:1;
+}
+.hs-label {
+  font-size:9px; letter-spacing:0.16em; text-transform:uppercase;
+  color:var(--gray); margin-top:3px;
+}
+
+/* green line accent */
+.green-line {
+  position:absolute; bottom:0; left:0; right:0;
+  height:2px;
+  background:linear-gradient(to right, var(--green), transparent 60%);
+}
+
+/* ══ CAROUSEL SECTION ══ */
+#vitrine {
+  padding:80px 0 100px;
+  background:var(--bg);
+  overflow:hidden;
+}
+.vitrine-header {
+  padding:0 56px;
+  display:flex; justify-content:space-between; align-items:flex-end;
+  margin-bottom:56px;
+}
+.sec-label {
+  font-size:10px; font-weight:600; letter-spacing:0.22em;
+  text-transform:uppercase; color:var(--green); margin-bottom:8px; display:block;
+}
+.sec-title {
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:clamp(28px,3.5vw,42px);
+  font-weight:800; text-transform:uppercase; line-height:1;
+}
+.carousel-nav { display:flex; gap:10px; }
+.cnav-btn {
+  width:42px; height:42px; border-radius:50%;
+  border:1px solid var(--border2); background:none;
+  color:var(--white); cursor:pointer; font-size:16px;
+  display:flex; align-items:center; justify-content:center;
+  transition:background .25s, border-color .25s;
+}
+.cnav-btn:hover { background:var(--green); border-color:var(--green); color:#000; }
+
+/* 3D Carousel */
+.carousel-wrap {
+  position:relative;
+  height:500px;
+  perspective:1200px;
+  display:flex; align-items:center; justify-content:center;
+}
+
+.carousel-track {
+  position:relative;
+  width:100%; height:100%;
+  transform-style:preserve-3d;
+}
+
+.ev-card {
+  position:absolute;
+  top:50%; left:50%;
+  width:340px;
+  transform-origin:center center;
+  transition:all 0.6s cubic-bezier(0.22,1,0.36,1);
+  cursor:pointer;
+}
+
+.ev-card .card-inner {
+  background:var(--bg2);
+  border-radius:16px;
+  overflow:hidden;
+  border:1px solid var(--border);
+  transition:border-color 0.4s, box-shadow 0.4s;
+}
+
+/* active card */
+.ev-card.active .card-inner {
+  border-color:var(--green);
+  box-shadow:0 0 0 1px var(--green), 0 32px 64px rgba(0,0,0,0.6);
+}
+.ev-card.active { z-index:10; }
+
+/* side cards */
+.ev-card.prev, .ev-card.next { z-index:5; }
+
+/* img area */
+.ev-img-wrap {
+  position:relative;
+  aspect-ratio:16/10;
+  background:#1a1a1a;
+  overflow:hidden;
+}
+.ev-img {
+  width:100%; height:100%; object-fit:cover;
+  transition:transform .6s cubic-bezier(.22,1,.36,1);
+}
+.ev-card.active .ev-img { transform:scale(1.03); }
+
+.ev-img-placeholder {
+  width:100%; height:100%;
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  gap:8px; color:var(--gray2);
+  font-size:10px; letter-spacing:0.1em; text-transform:uppercase;
+}
+.ev-img-placeholder svg { opacity:0.25; }
+
+.ev-green-tag {
+  position:absolute; top:12px; left:12px;
+  display:flex; align-items:center; gap:5px;
+  background:var(--green); color:#000;
+  font-size:9px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase;
+  padding:4px 10px; border-radius:100px;
+}
+.ev-green-tag svg { width:10px; height:10px; fill:#000; }
+
+.ev-info { padding:20px 22px; }
+.ev-brand {
+  font-size:10px; font-weight:600; letter-spacing:0.14em;
+  text-transform:uppercase; color:var(--gray);
+  margin-bottom:5px; display:flex; align-items:center; gap:7px;
+}
+.ev-brand-dot { width:5px; height:5px; border-radius:50%; background:var(--green); }
+.ev-name {
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:22px; font-weight:700; text-transform:uppercase;
+  line-height:1.1; margin-bottom:10px;
+}
+.ev-meta {
+  font-family:'Space Mono',monospace;
+  font-size:10px; color:var(--gray); line-height:1.7;
+  margin-bottom:14px;
+}
+.ev-meta span {
+  display:inline-flex; align-items:center; gap:6px;
+  margin-right:14px;
+}
+.ev-meta svg { width:10px; height:10px; fill:var(--green); }
+.ev-footer {
+  display:flex; justify-content:space-between; align-items:center;
+  border-top:1px solid var(--border); padding-top:14px;
+}
+.ev-price {
+  font-family:'Space Mono',monospace;
+  font-size:14px; color:var(--white); font-weight:700;
+}
+.ev-btn {
+  display:flex; align-items:center; gap:6px;
+  background:var(--green); color:#000;
+  font-size:9px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase;
+  padding:8px 14px; border-radius:100px; border:none; cursor:pointer;
+  transition:background .25s, transform .2s; text-decoration:none;
+}
+.ev-btn:hover { background:var(--green2); transform:translateY(-1px); }
+.ev-btn svg { width:11px; height:11px; fill:#000; }
+
+/* dots */
+.carousel-dots {
+  display:flex; justify-content:center; gap:8px;
+  margin-top:48px;
+}
+.cdot {
+  width:6px; height:6px; border-radius:50%;
+  background:var(--gray2); border:none; cursor:pointer;
+  transition:background .3s, width .3s;
+}
+.cdot.active { background:var(--green); width:20px; border-radius:3px; }
+
+/* ══ CTA STRIP ══ */
+#cta-strip {
+  background:var(--bg2);
+  border-top:1px solid var(--border);
+  padding:56px;
+  display:flex; align-items:center; justify-content:space-between;
+  flex-wrap:wrap; gap:28px;
+}
+.cta-text h3 {
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:32px; font-weight:800; text-transform:uppercase;
+  margin-bottom:6px;
+}
+.cta-text h3 span { color:var(--green); }
+.cta-text p { font-size:13px; color:var(--gray); font-weight:300; }
+.cta-btns { display:flex; gap:12px; }
+.btn-pill {
+  display:inline-flex; align-items:center; gap:8px;
+  background:var(--white); color:#000;
+  font-size:11px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase;
+  padding:12px 24px; border-radius:100px; text-decoration:none;
+  transition:background .25s, transform .2s;
+}
+.btn-pill:hover { background:#ddd; transform:translateY(-2px); }
+.btn-pill-green {
+  display:inline-flex; align-items:center; gap:8px;
+  background:var(--green); color:#000;
+  font-size:11px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase;
+  padding:12px 24px; border-radius:100px; text-decoration:none;
+  transition:background .25s, transform .2s;
+}
+.btn-pill-green:hover { background:var(--green2); transform:translateY(-2px); }
+
+/* ══ FOOTER ══ */
+footer {
+  background:var(--bg);
+  border-top:1px solid var(--border);
+  padding:28px 56px;
+  display:flex; justify-content:space-between; align-items:center;
+  flex-wrap:wrap; gap:16px;
+}
+footer p { font-size:11px; color:var(--gray2); letter-spacing:0.06em; }
+footer a {
+  font-size:11px; color:var(--gray2); text-decoration:none;
+  letter-spacing:0.06em; transition:color .25s;
+}
+footer a:hover { color:var(--white); }
+
+/* ══ RESPONSIVE ══ */
+@media(max-width:800px){
+  header { padding:0 20px; }
+  .header-center { display:none; }
+  #hero .hero-content { padding:0 24px 36px; flex-direction:column; align-items:flex-start; gap:24px; }
+  .hero-stats { display:none; }
+  .vitrine-header { padding:0 20px; }
+  #cta-strip { padding:40px 20px; flex-direction:column; align-items:flex-start; }
+  footer { padding:24px 20px; }
+  .carousel-wrap { height:420px; }
+  .ev-card { width:280px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ══ HEADER ══ -->
+<header>
+  <a href="index.html" class="header-logo">
+    <img src="images/logo.png" alt="Motor Trade" onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+    <span class="header-logo-text" style="display:none">Motor <span>Trade</span></span>
+  </a>
+
+  <div class="header-center">
+    <div class="elec-badge">
+      <svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+      Elétricos
+    </div>
+    <span class="header-sub">— Vitrine exclusiva</span>
+  </div>
+
+  <div class="header-right">
+    <a href="index.html" class="btn-back">
+      ← Voltar ao site
+    </a>
+    <a href="https://wa.me/5551999999999" class="btn-wpp" target="_blank">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      WhatsApp
+    </a>
+  </div>
+</header>
+
+<!-- ══ HERO ══ -->
+<div id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <div class="hero-left">
+      <div class="hero-tag">
+        <svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        Motor Trade Elétricos
+      </div>
+      <h1 class="hero-title">O futuro<br>é <span>elétrico</span></h1>
+      <p class="hero-sub">Veículos elétricos premium selecionados com a mesma excelência que você já conhece da Motor Trade.</p>
+    </div>
+    <div class="hero-stats">
+      <div class="hs-item">
+        <div class="hs-num">0</div>
+        <div class="hs-label">Emissões</div>
+      </div>
+      <div class="hs-item">
+        <div class="hs-num">100%</div>
+        <div class="hs-label">Elétrico</div>
+      </div>
+      <div class="hs-item">
+        <div class="hs-num">+500<br><span style="font-size:14px">km</span></div>
+        <div class="hs-label">Autonomia</div>
+      </div>
+    </div>
+  </div>
+  <div class="green-line"></div>
+</div>
+
+<!-- ══ VITRINE CARROSSEL ══ -->
+<section id="vitrine">
+  <div class="vitrine-header">
+    <div>
+      <span class="sec-label">⚡ Estoque elétrico</span>
+      <h2 class="sec-title">Veículos em Destaque</h2>
+    </div>
+    <div class="carousel-nav">
+      <button class="cnav-btn" id="prevBtn">&#8592;</button>
+      <button class="cnav-btn" id="nextBtn">&#8594;</button>
+    </div>
+  </div>
+
+  <div class="carousel-wrap">
+    <div class="carousel-track" id="carouselTrack">
+
+      <!-- Card 1 -->
+      <div class="ev-card" data-index="0">
+        <div class="card-inner">
+          <div class="ev-img-wrap">
+            <div class="ev-img-placeholder">
+              <svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+              Inserir foto
+            </div>
+            <div class="ev-green-tag">
+              <svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+              Destaque
+            </div>
+          </div>
+          <div class="ev-info">
+            <div class="ev-brand"><div class="ev-brand-dot"></div>Tesla</div>
+            <div class="ev-name">Model S Plaid</div>
+            <div class="ev-meta">
+              <span><svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>KM: 8.000</span>
+              <span><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Ano: 2023</span>
+              <span><svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>1.020 cv</span>
+            </div>
+            <div class="ev-footer">
+              <div class="ev-price">Consulte</div>
+              <a href="https://wa.me/5551999999999" class="ev-btn" target="_blank">
+                <svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                Ver detalhes
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="ev-card" data-index="1">
+        <div class="card-inner">
+          <div class="ev-img-wrap">
+            <div class="ev-img-placeholder">
+              <svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+              Inserir foto
+            </div>
+            <div class="ev-green-tag">
+              <svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+              Novo
+            </div>
+          </div>
+          <div class="ev-info">
+            <div class="ev-brand"><div class="ev-brand-dot"></div>BMW</div>
+            <div class="ev-name">iX M60</div>
+            <div class="ev-meta">
+              <span><svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>KM: 12.000</span>
+              <span><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Ano: 2023</span>
+              <span><svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>619 cv</span>
+            </div>
+            <div class="ev-footer">
+              <div class="ev-price">Consulte</div>
+              <a href="https://wa.me/5551999999999" class="ev-btn" target="_blank">
+                <svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                Ver detalhes
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="ev-card" data-index="2">
+        <div class="card-inner">
+          <div class="ev-img-wrap">
+            <div class="ev-img-placeholder">
+              <svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+              Inserir foto
+            </div>
+          </div>
+          <div class="ev-info">
+            <div class="ev-brand"><div class="ev-brand-dot"></div>Porsche</div>
+            <div class="ev-name">Taycan Turbo S</div>
+            <div class="ev-meta">
+              <span><svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>KM: 5.400</span>
+              <span><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Ano: 2024</span>
+              <span><svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>761 cv</span>
+            </div>
+            <div class="ev-footer">
+              <div class="ev-price">Consulte</div>
+              <a href="https://wa.me/5551999999999" class="ev-btn" target="_blank">
+                <svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                Ver detalhes
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 4 -->
+      <div class="ev-card" data-index="3">
+        <div class="card-inner">
+          <div class="ev-img-wrap">
+            <div class="ev-img-placeholder">
+              <svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+              Inserir foto
+            </div>
+          </div>
+          <div class="ev-info">
+            <div class="ev-brand"><div class="ev-brand-dot"></div>Mercedes-Benz</div>
+            <div class="ev-name">EQS 580</div>
+            <div class="ev-meta">
+              <span><svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>KM: 9.200</span>
+              <span><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Ano: 2023</span>
+              <span><svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>523 cv</span>
+            </div>
+            <div class="ev-footer">
+              <div class="ev-price">Consulte</div>
+              <a href="https://wa.me/5551999999999" class="ev-btn" target="_blank">
+                <svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                Ver detalhes
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 5 -->
+      <div class="ev-card" data-index="4">
+        <div class="card-inner">
+          <div class="ev-img-wrap">
+            <div class="ev-img-placeholder">
+              <svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+              Inserir foto
+            </div>
+          </div>
+          <div class="ev-info">
+            <div class="ev-brand"><div class="ev-brand-dot"></div>Audi</div>
+            <div class="ev-name">e-tron GT RS</div>
+            <div class="ev-meta">
+              <span><svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>KM: 7.100</span>
+              <span><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Ano: 2023</span>
+              <span><svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>598 cv</span>
+            </div>
+            <div class="ev-footer">
+              <div class="ev-price">Consulte</div>
+              <a href="https://wa.me/5551999999999" class="ev-btn" target="_blank">
+                <svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                Ver detalhes
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="carousel-dots" id="carouselDots"></div>
+</section>
+
+<!-- ══ CTA ══ -->
+<div id="cta-strip">
+  <div class="cta-text">
+    <h3>Interesse em um <span>elétrico</span>?</h3>
+    <p>Fale com nossos especialistas e encontre o veículo ideal para você.</p>
+  </div>
+  <div class="cta-btns">
+    <a href="index.html" class="btn-pill">← Ver estoque completo</a>
+    <a href="https://wa.me/5551999999999" class="btn-pill-green" target="_blank">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      Falar no WhatsApp
+    </a>
+  </div>
+</div>
+
+<!-- ══ FOOTER ══ -->
+<footer>
+  <p>© 2025 Motor Trade. Todos os direitos reservados.</p>
+  <a href="index.html">← Voltar ao site principal</a>
+</footer>
+
+<script>
+const cards = document.querySelectorAll('.ev-card');
+const dotsContainer = document.getElementById('carouselDots');
+const total = cards.length;
+let current = 0;
+
+// Create dots
+cards.forEach((_, i) => {
+  const d = document.createElement('button');
+  d.className = 'cdot' + (i === 0 ? ' active' : '');
+  d.addEventListener('click', () => goTo(i));
+  dotsContainer.appendChild(d);
+});
+
+function goTo(index) {
+  current = (index + total) % total;
+  updateCarousel();
+}
+
+function updateCarousel() {
+  const dots = document.querySelectorAll('.cdot');
+  const centerX = window.innerWidth / 2;
+  const cardW = window.innerWidth < 800 ? 280 : 340;
+
+  cards.forEach((card, i) => {
+    const offset = i - current;
+    const absOffset = Math.abs(offset);
+
+    // Wrap around
+    let pos = offset;
+    if (offset > total / 2) pos = offset - total;
+    if (offset < -total / 2) pos = offset + total;
+
+    const absPos = Math.abs(pos);
+
+    // Position
+    const x = pos * (cardW * 0.72);
+    const z = absPos === 0 ? 0 : -180 * absPos;
+    const scale = absPos === 0 ? 1 : absPos === 1 ? 0.82 : 0.68;
+    const opacity = absPos === 0 ? 1 : absPos === 1 ? 0.45 : 0.2;
+    const blur = absPos === 0 ? 0 : absPos === 1 ? 4 : 8;
+
+    card.style.transform = `translate(calc(-50% + ${x}px), -50%) translateZ(${z}px) scale(${scale})`;
+    card.style.opacity = opacity;
+    card.style.filter = blur > 0 ? `blur(${blur}px)` : 'none';
+    card.style.pointerEvents = absPos === 0 ? 'auto' : 'none';
+
+    card.classList.toggle('active', absPos === 0);
+    card.classList.toggle('prev', pos === -1);
+    card.classList.toggle('next', pos === 1);
+  });
+
+  dots.forEach((d, i) => d.classList.toggle('active', i === current));
+}
+
+document.getElementById('prevBtn').addEventListener('click', () => goTo(current - 1));
+document.getElementById('nextBtn').addEventListener('click', () => goTo(current + 1));
+
+// Touch/swipe
+let touchStartX = 0;
+document.querySelector('.carousel-wrap').addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; });
+document.querySelector('.carousel-wrap').addEventListener('touchend', e => {
+  const diff = touchStartX - e.changedTouches[0].clientX;
+  if (Math.abs(diff) > 50) goTo(diff > 0 ? current + 1 : current - 1);
+});
+
+// Init
+updateCarousel();
+window.addEventListener('resize', updateCarousel);
+</script>
+</body>
+</html>
