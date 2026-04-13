@@ -222,6 +222,21 @@ section { padding:80px 56px; }
 }
 .car-card:hover .cc-img { transform:scale(1.05); }
 
+/* card gallery arrows */
+.cc-gallery-btn {
+  position:absolute; top:50%; transform:translateY(-50%);
+  width:28px; height:28px; border-radius:50%;
+  background:rgba(0,0,0,0.55); border:1px solid rgba(255,255,255,0.2);
+  color:var(--white); font-size:12px; cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  opacity:0; transition:opacity .25s, background .25s;
+  z-index:5;
+}
+.cc-img-wrap:hover .cc-gallery-btn { opacity:1; }
+.cc-gallery-btn:hover { background:rgba(0,0,0,0.85); border-color:rgba(255,255,255,0.5); }
+.cc-gallery-btn.prev { left:8px; }
+.cc-gallery-btn.next { right:8px; }
+
 .cc-img-wrap { position:relative; aspect-ratio:16/11; overflow:hidden; background:#1a1a1a; }
 .cc-img-wrap .placeholder {
   width:100%; height:100%;
@@ -621,8 +636,20 @@ footer {
 }
 .modal-btn-share:hover { border-color:var(--white); color:var(--white); }
 
-@media(max-width:700px){
-  .modal-body { padding:0 20px 28px; }
+/* modal image nav arrows */
+.modal-img-main { position:relative; }
+#modalImgMain img { transition:opacity .15s ease; width:100%; height:100%; object-fit:cover; }
+.modal-img-nav {
+  position:absolute; top:50%; transform:translateY(-50%);
+  width:36px; height:36px; border-radius:50%;
+  background:rgba(0,0,0,0.6); border:1px solid rgba(255,255,255,0.2);
+  color:var(--white); font-size:16px; cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  transition:background .2s; z-index:5;
+}
+.modal-img-nav:hover { background:rgba(0,0,0,0.9); border-color:rgba(255,255,255,.5); }
+.modal-img-nav.prev { left:12px; }
+.modal-img-nav.next { right:12px; }
   .modal-specs { grid-template-columns:repeat(2,1fr); }
   .modal-opts { grid-template-columns:1fr; }
   .modal-header-info { flex-direction:column; }
@@ -775,10 +802,16 @@ footer {
 
   <div class="cars-grid">
     <div class="car-card reveal">
-      <div class="cc-img-wrap">
+      <div class="cc-img-wrap" data-images='["images/card-1.jpg","images/card-1-2.jpg","images/card-1-3.jpg","images/card-1-4.jpg","images/card-1-5.jpg","images/card-1-6.jpg","images/card-1-7.jpg","images/card-1-8.jpg","images/card-1-9.jpg"]' data-current="0">
         <img class="cc-img" src="images/card-1.jpg" alt="Porsche 911 Carrera S">
         <div class="cc-badge">Destaque</div>
-        <div class="cc-dots"><div class="cc-dot on"></div><div class="cc-dot"></div><div class="cc-dot"></div></div>
+        <button class="cc-gallery-btn prev" onclick="cardGallery(this,-1)">&#8592;</button>
+        <button class="cc-gallery-btn next" onclick="cardGallery(this,1)">&#8594;</button>
+        <div class="cc-dots" id="dots-card-1">
+          <div class="cc-dot on"></div><div class="cc-dot"></div><div class="cc-dot"></div>
+          <div class="cc-dot"></div><div class="cc-dot"></div><div class="cc-dot"></div>
+          <div class="cc-dot"></div><div class="cc-dot"></div><div class="cc-dot"></div>
+        </div>
       </div>
       <div class="cc-info">
         <div class="cc-brand"><div class="cc-brand-dot"></div>Porsche</div>
@@ -1110,6 +1143,8 @@ footer {
           <svg width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
           Foto do veículo
         </div>
+        <button class="modal-img-nav prev" onclick="modalNav(-1)">&#8592;</button>
+        <button class="modal-img-nav next" onclick="modalNav(1)">&#8594;</button>
       </div>
 
       <!-- Thumbnails -->
@@ -1167,7 +1202,17 @@ const vehicles = {
     year: '2020/2020 — IPVA 2026 Pago',
     price: 'R$ 699.900',
     priceTraoca: 'Com troca: R$ 701.900',
-    images: ['images/card-1.jpg'],
+    images: [
+      'images/card-1.jpg',
+      'images/card-1-2.jpg',
+      'images/card-1-3.jpg',
+      'images/card-1-4.jpg',
+      'images/card-1-5.jpg',
+      'images/card-1-6.jpg',
+      'images/card-1-7.jpg',
+      'images/card-1-8.jpg',
+      'images/card-1-9.jpg'
+    ],
     specs: [
       { label: 'Quilometragem', value: '21.000 km' },
       { label: 'Ano', value: '2020' },
@@ -1266,6 +1311,7 @@ function openModal(id) {
   document.getElementById('modalWpp').href = v.wpp;
 
   // Open
+  modalImgIndex = 0;
   document.getElementById('modalOverlay').classList.add('open');
   document.body.style.overflow = 'hidden';
 }
@@ -1291,7 +1337,44 @@ function shareVehicle() {
 // Close on ESC
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 
-// ── Carousel ──
+// ── Card Gallery ──
+function cardGallery(btn, dir) {
+  event.stopPropagation();
+  const wrap = btn.closest('.cc-img-wrap');
+  const images = JSON.parse(wrap.dataset.images);
+  let current = parseInt(wrap.dataset.current) || 0;
+  current = (current + dir + images.length) % images.length;
+  wrap.dataset.current = current;
+  const img = wrap.querySelector('.cc-img');
+  img.style.opacity = '0';
+  setTimeout(() => {
+    img.src = images[current];
+    img.style.opacity = '1';
+  }, 150);
+  // update dots
+  const dots = wrap.querySelectorAll('.cc-dot');
+  dots.forEach((d, i) => d.classList.toggle('on', i === current));
+}
+
+// ── Modal image navigation ──
+let modalImgIndex = 0;
+let modalImages = [];
+
+function modalNav(dir) {
+  modalImages = currentVehicle.images;
+  modalImgIndex = (modalImgIndex + dir + modalImages.length) % modalImages.length;
+  const imgEl = document.querySelector('#modalImgMain img');
+  if (imgEl) {
+    imgEl.style.opacity = '0';
+    setTimeout(() => { imgEl.src = modalImages[modalImgIndex]; imgEl.style.opacity = '1'; }, 150);
+  }
+  // update thumbs
+  document.querySelectorAll('.modal-thumb').forEach((t,i) => t.classList.toggle('active', i === modalImgIndex));
+}
+
+// reset modal index on open
+const _origOpen = openModal;
+
 const slides = document.querySelectorAll('.hero-slide');
 const dots   = document.querySelectorAll('.hero-dot');
 let current  = 0;
