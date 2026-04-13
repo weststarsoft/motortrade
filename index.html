@@ -247,11 +247,11 @@ section { padding:80px 56px; }
 .cc-img {
   position:absolute; inset:0;
   width:100%; height:100%; object-fit:cover;
-  transition:opacity .35s ease;
   filter:brightness(.88);
+  transition:transform .45s cubic-bezier(.22,1,.36,1);
 }
-.cc-img.active { opacity:1; z-index:1; }
-.cc-img.next-img { opacity:0; z-index:2; }
+.cc-img.active  { transform:translateX(0);     z-index:2; }
+.cc-img.next-img { transform:translateX(100%); z-index:1; }
 .cc-badge {
   position:absolute; top:12px; left:12px;
   background:var(--white); color:#000;
@@ -1142,9 +1142,9 @@ footer {
     <div class="modal-body">
 
       <!-- Imagem principal -->
-      <div class="modal-img-main" id="modalImgMain" style="position:relative;">
-        <img class="active" src="" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:opacity .35s ease;opacity:1;z-index:1;">
-        <img class="next-img" src="" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:opacity .35s ease;opacity:0;z-index:2;">
+      <div class="modal-img-main" id="modalImgMain" style="position:relative;overflow:hidden;">
+        <img class="active" src="" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:2;transform:translateX(0);">
+        <img class="next-img" src="" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1;transform:translateX(100%);">
         <button class="modal-img-nav prev" onclick="modalNav(-1)">&#8592;</button>
         <button class="modal-img-nav next" onclick="modalNav(1)">&#8594;</button>
       </div>
@@ -1340,61 +1340,82 @@ function shareVehicle() {
 // Close on ESC
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 
-// ── Card Gallery ──
+// ── Card Gallery (slide) ──
 function cardGallery(btn, dir) {
   event.stopPropagation();
   const wrap = btn.closest('.cc-img-wrap');
   const images = JSON.parse(wrap.dataset.images);
   let current = parseInt(wrap.dataset.current) || 0;
-  current = (current + dir + images.length) % images.length;
-  wrap.dataset.current = current;
+  const next = (current + dir + images.length) % images.length;
+  wrap.dataset.current = next;
 
   const imgActive = wrap.querySelector('.cc-img.active');
   const imgNext   = wrap.querySelector('.cc-img.next-img');
 
-  // preload next image then crossfade
-  imgNext.src = images[current];
-  imgNext.onload = () => {
-    imgNext.style.opacity = '1';
-    imgActive.style.opacity = '0';
-    setTimeout(() => {
-      imgActive.src = images[current];
-      imgActive.style.opacity = '1';
-      imgNext.style.opacity = '0';
-    }, 350);
-  };
+  // Position next image off-screen in the right direction
+  imgNext.src = images[next];
+  imgNext.style.transition = 'none';
+  imgNext.style.transform = dir > 0 ? 'translateX(100%)' : 'translateX(-100%)';
+  imgNext.style.zIndex = '3';
+
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      imgNext.style.transition = 'transform .45s cubic-bezier(.22,1,.36,1)';
+      imgActive.style.transition = 'transform .45s cubic-bezier(.22,1,.36,1)';
+      imgNext.style.transform = 'translateX(0)';
+      imgActive.style.transform = dir > 0 ? 'translateX(-100%)' : 'translateX(100%)';
+
+      setTimeout(() => {
+        imgActive.style.transition = 'none';
+        imgActive.style.transform = dir > 0 ? 'translateX(100%)' : 'translateX(-100%)';
+        imgActive.src = images[next];
+        // swap classes
+        imgActive.style.zIndex = '2';
+        imgNext.style.zIndex = '1';
+      }, 460);
+    });
+  });
 
   // update dots
-  const dots = wrap.querySelectorAll('.cc-dot');
-  dots.forEach((d, i) => d.classList.toggle('on', i === current));
+  wrap.querySelectorAll('.cc-dot').forEach((d, i) => d.classList.toggle('on', i === next));
 }
 
-// ── Modal image navigation ──
+// ── Modal image navigation (slide) ──
 let modalImgIndex = 0;
-let modalImages = [];
+let modalImages   = [];
 
 function modalNav(dir) {
   modalImages = currentVehicle.images;
-  modalImgIndex = (modalImgIndex + dir + modalImages.length) % modalImages.length;
+  const next = (modalImgIndex + dir + modalImages.length) % modalImages.length;
+  modalImgIndex = next;
 
-  const wrap = document.getElementById('modalImgMain');
+  const wrap      = document.getElementById('modalImgMain');
   const imgActive = wrap.querySelector('img.active');
   const imgNext   = wrap.querySelector('img.next-img');
 
-  if (!imgActive || !imgNext) return;
+  imgNext.src = modalImages[next];
+  imgNext.style.transition = 'none';
+  imgNext.style.transform = dir > 0 ? 'translateX(100%)' : 'translateX(-100%)';
+  imgNext.style.zIndex = '3';
 
-  imgNext.src = modalImages[modalImgIndex];
-  imgNext.onload = () => {
-    imgNext.style.opacity = '1';
-    imgActive.style.opacity = '0';
-    setTimeout(() => {
-      imgActive.src = modalImages[modalImgIndex];
-      imgActive.style.opacity = '1';
-      imgNext.style.opacity = '0';
-    }, 350);
-  };
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      imgNext.style.transition = 'transform .45s cubic-bezier(.22,1,.36,1)';
+      imgActive.style.transition = 'transform .45s cubic-bezier(.22,1,.36,1)';
+      imgNext.style.transform = 'translateX(0)';
+      imgActive.style.transform = dir > 0 ? 'translateX(-100%)' : 'translateX(100%)';
 
-  document.querySelectorAll('.modal-thumb').forEach((t,i) => t.classList.toggle('active', i === modalImgIndex));
+      setTimeout(() => {
+        imgActive.style.transition = 'none';
+        imgActive.style.transform = dir > 0 ? 'translateX(100%)' : 'translateX(-100%)';
+        imgActive.src = modalImages[next];
+        imgActive.style.zIndex = '2';
+        imgNext.style.zIndex = '1';
+      }, 460);
+    });
+  });
+
+  document.querySelectorAll('.modal-thumb').forEach((t, i) => t.classList.toggle('active', i === next));
 }
 
 // reset modal index on open
