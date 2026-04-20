@@ -6,6 +6,7 @@
 <title>Motor Trade — Veículos Premium</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700;800;900&family=Barlow+Condensed:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root {
   --bg:      #111111;
@@ -467,7 +468,7 @@ footer {
 #localizacao .loc-icon { border-color: rgba(0,0,0,0.18) !important; color: #555 !important; }
 #localizacao .loc-map { border-color: rgba(0,0,0,0.12) !important; }
 
-/* ══ WPP FLOAT ══ */
+@keyframes spin { to { transform: rotate(360deg); } }
 .wpp-float {
   position:fixed; bottom:28px; right:28px; z-index:300;
   width:52px; height:52px; border-radius:50%; background:#25D366;
@@ -802,80 +803,11 @@ footer {
     </div>
     <a href="#estoque" class="ver-todos">Ver estoque completo →</a>
   </div>
-
-  <div class="cars-grid">
-    <div class="car-card reveal">
-      <div class="cc-img-wrap" data-images='["images/card-1.jpg","images/card-1-2.jpg","images/card-1-3.jpg","images/card-1-4.jpg","images/card-1-5.jpg","images/card-1-6.jpg","images/card-1-7.jpg","images/card-1-8.jpg","images/card-1-9.jpg"]' data-current="0">
-        <img class="cc-img active" src="images/card-1.jpg" alt="Porsche 911 Carrera S">
-        <img class="cc-img next-img" src="" alt="">
-        <div class="cc-badge">Destaque</div>
-        <button class="cc-gallery-btn prev" onclick="cardGallery(this,-1)">&#8592;</button>
-        <button class="cc-gallery-btn next" onclick="cardGallery(this,1)">&#8594;</button>
-        <div class="cc-dots" id="dots-card-1">
-          <div class="cc-dot on"></div><div class="cc-dot"></div><div class="cc-dot"></div>
-          <div class="cc-dot"></div><div class="cc-dot"></div><div class="cc-dot"></div>
-          <div class="cc-dot"></div><div class="cc-dot"></div><div class="cc-dot"></div>
-        </div>
-      </div>
-      <div class="cc-info">
-        <div class="cc-brand"><div class="cc-brand-dot"></div>Porsche</div>
-        <div class="cc-name">911 Carrera S</div>
-        <div class="cc-meta">KM: 21.000 &nbsp;·&nbsp; Ano: 2020 &nbsp;·&nbsp; Gasolina</div>
-        <div class="cc-footer">
-          <div class="cc-price">R$ 699.900</div>
-          <button class="cc-btn" onclick="openModal('porsche911')">Detalhes →</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="car-card reveal">
-      <div class="cc-img-wrap">
-        <img class="cc-img" src="images/card-2.jpg" alt="BMW X3 M50">
-        <div class="cc-badge">Novo</div>
-        <div class="cc-dots"><div class="cc-dot on"></div><div class="cc-dot"></div><div class="cc-dot"></div></div>
-      </div>
-      <div class="cc-info">
-        <div class="cc-brand"><div class="cc-brand-dot"></div>BMW</div>
-        <div class="cc-name">X3 M50 3.0 Turbo Híbrido</div>
-        <div class="cc-meta">KM: 7.000 &nbsp;·&nbsp; Ano: 2026 &nbsp;·&nbsp; Gasolina e elétrico</div>
-        <div class="cc-footer">
-          <div class="cc-price">R$ 589.900</div>
-          <button class="cc-btn">Detalhes →</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="car-card reveal">
-      <div class="cc-img-wrap">
-        <img class="cc-img" src="images/card-3.jpg" alt="Porsche Panamera">
-        <div class="cc-badge">Blindado</div>
-        <div class="cc-dots"><div class="cc-dot on"></div><div class="cc-dot"></div><div class="cc-dot"></div></div>
-      </div>
-      <div class="cc-info">
-        <div class="cc-brand"><div class="cc-brand-dot"></div>Porsche</div>
-        <div class="cc-name">Panamera 4 Blindado Axxo</div>
-        <div class="cc-meta">KM: 32.000 &nbsp;·&nbsp; Ano: 2018 &nbsp;·&nbsp; Gasolina e elétrico</div>
-        <div class="cc-footer">
-          <div class="cc-price">R$ 489.900</div>
-          <button class="cc-btn">Detalhes →</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="car-card reveal">
-      <div class="cc-img-wrap">
-        <img class="cc-img" src="images/card-4.jpg" alt="Audi RS5">
-        <div class="cc-dots"><div class="cc-dot on"></div><div class="cc-dot"></div><div class="cc-dot"></div></div>
-      </div>
-      <div class="cc-info">
-        <div class="cc-brand"><div class="cc-brand-dot"></div>Audi</div>
-        <div class="cc-name">RS5</div>
-        <div class="cc-meta">KM: 22.000 &nbsp;·&nbsp; Ano: 2018 &nbsp;·&nbsp; Gasolina</div>
-        <div class="cc-footer">
-          <div class="cc-price">R$ 410.900</div>
-          <button class="cc-btn">Detalhes →</button>
-        </div>
-      </div>
+  <div class="cars-grid" id="destaquesGrid">
+    <!-- carregado dinamicamente do Supabase -->
+    <div style="grid-column:1/-1;text-align:center;padding:48px;color:var(--gray2);font-size:13px;">
+      <div style="display:inline-block;width:20px;height:20px;border:2px solid var(--border2);border-top-color:var(--white);border-radius:50%;animation:spin .7s linear infinite;margin-bottom:12px;"></div>
+      <div>Carregando veículos...</div>
     </div>
   </div>
 </section>
@@ -891,104 +823,12 @@ footer {
     </div>
     <a href="#cta" class="ver-todos">Não encontrou? Fale conosco →</a>
   </div>
-
-  <div class="cars-grid">
-    <div class="car-card reveal">
-      <div class="cc-img-wrap">
-        <img class="cc-img" src="images/estoque-1.jpg" alt="Audi Q5 Sportback">
-        <div class="cc-dots"><div class="cc-dot on"></div><div class="cc-dot"></div><div class="cc-dot"></div></div>
-      </div>
-      <div class="cc-info">
-        <div class="cc-brand"><div class="cc-brand-dot"></div>Audi</div>
-        <div class="cc-name">Q5 Sportback Performance Black</div>
-        <div class="cc-meta">KM: 60.000 &nbsp;·&nbsp; Ano: 2022 &nbsp;·&nbsp; Gasolina e elétrico</div>
-        <div class="cc-footer">
-          <div class="cc-price">R$ 259.900</div>
-          <button class="cc-btn">Detalhes →</button>
-        </div>
-      </div>
+  <div class="cars-grid" id="estoqueGrid">
+    <div style="grid-column:1/-1;text-align:center;padding:48px;color:var(--gray2);font-size:13px;">
+      <div style="display:inline-block;width:20px;height:20px;border:2px solid var(--border2);border-top-color:var(--white);border-radius:50%;animation:spin .7s linear infinite;margin-bottom:12px;"></div>
+      <div>Carregando estoque...</div>
     </div>
-
-    <div class="car-card reveal">
-      <div class="cc-img-wrap">
-        <img class="cc-img" src="images/estoque-2.jpg" alt="Porsche Macan">
-        <div class="cc-dots"><div class="cc-dot on"></div><div class="cc-dot"></div><div class="cc-dot"></div></div>
-      </div>
-      <div class="cc-info">
-        <div class="cc-brand"><div class="cc-brand-dot"></div>Porsche</div>
-        <div class="cc-name">Macan 2.0 Turbo</div>
-        <div class="cc-meta">KM: 59.000 &nbsp;·&nbsp; Ano: 2018 &nbsp;·&nbsp; Gasolina</div>
-        <div class="cc-footer">
-          <div class="cc-price">R$ 259.900</div>
-          <button class="cc-btn">Detalhes →</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="car-card reveal">
-      <div class="cc-img-wrap">
-        <img class="cc-img" src="images/estoque-3.jpg" alt="Audi A5 S-Line">
-        <div class="cc-dots"><div class="cc-dot on"></div><div class="cc-dot"></div><div class="cc-dot"></div></div>
-      </div>
-      <div class="cc-info">
-        <div class="cc-brand"><div class="cc-brand-dot"></div>Audi</div>
-        <div class="cc-name">A5 S-Line 2.0 TFSI Turbo</div>
-        <div class="cc-meta">KM: 42.000 &nbsp;·&nbsp; Ano: 2022 &nbsp;·&nbsp; Gasolina</div>
-        <div class="cc-footer">
-          <div class="cc-price">R$ 239.900</div>
-          <button class="cc-btn">Detalhes →</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="car-card reveal">
-      <div class="cc-img-wrap">
-        <img class="cc-img" src="images/estoque-4.jpg" alt="BYD Seal">
-        <div class="cc-badge">Elétrico</div>
-        <div class="cc-dots"><div class="cc-dot on"></div><div class="cc-dot"></div><div class="cc-dot"></div></div>
-      </div>
-      <div class="cc-info">
-        <div class="cc-brand"><div class="cc-brand-dot"></div>BYD</div>
-        <div class="cc-name">Seal</div>
-        <div class="cc-meta">KM: 21.000 &nbsp;·&nbsp; Ano: 2025 &nbsp;·&nbsp; Elétrico</div>
-        <div class="cc-footer">
-          <div class="cc-price">R$ 229.900</div>
-          <button class="cc-btn">Detalhes →</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="car-card reveal">
-      <div class="cc-img-wrap">
-        <img class="cc-img" src="images/estoque-5.jpg" alt="Mitsubishi Lancer Evo X">
-        <div class="cc-dots"><div class="cc-dot on"></div><div class="cc-dot"></div><div class="cc-dot"></div></div>
-      </div>
-      <div class="cc-info">
-        <div class="cc-brand"><div class="cc-brand-dot"></div>Mitsubishi</div>
-        <div class="cc-name">Lancer Evolution X MR SST</div>
-        <div class="cc-meta">KM: 38.000 &nbsp;·&nbsp; Ano: 2014 &nbsp;·&nbsp; Gasolina</div>
-        <div class="cc-footer">
-          <div class="cc-price">R$ 219.900</div>
-          <button class="cc-btn">Detalhes →</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="car-card reveal">
-      <div class="cc-img-wrap">
-        <img class="cc-img" src="images/estoque-6.jpg" alt="Volvo XC40">
-        <div class="cc-dots"><div class="cc-dot on"></div><div class="cc-dot"></div><div class="cc-dot"></div></div>
-      </div>
-      <div class="cc-info">
-        <div class="cc-brand"><div class="cc-brand-dot"></div>Volvo</div>
-        <div class="cc-name">XC40 T5 Inscription Recharge</div>
-        <div class="cc-meta">KM: 44.000 &nbsp;·&nbsp; Ano: 2022 &nbsp;·&nbsp; Gasolina e elétrico</div>
-        <div class="cc-footer">
-          <div class="cc-price">R$ 206.900</div>
-          <button class="cc-btn">Detalhes →</button>
-        </div>
-      </div>
-    </div>
+  </div>
   </div>
 </section>
 
@@ -1465,6 +1305,123 @@ const io = new IntersectionObserver((entries) => {
   });
 }, { threshold: 0.1 });
 revealEls.forEach(r => io.observe(r));
+
+// ══ SUPABASE ══
+const SUPABASE_URL = 'https://qmhduizgxkadzaippbwi.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFtaGR1aXpneGthZHphaXBwYndpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3MTQyNDUsImV4cCI6MjA5MjI5MDI0NX0.wrB2K6JY4Y0ujltk0By6dXZ_nEDjHShRrDXCiiYHHN8';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+function renderCard(v) {
+  const fotos = v.fotos_veiculos?.sort((a,b) => a.ordem - b.ordem) || [];
+  const primeiraFoto = fotos[0]?.url || '';
+  const imagens = fotos.map(f => f.url);
+  const imagensJSON = JSON.stringify(imagens).replace(/'/g, '&#39;');
+  const preco = v.exibir_preco && v.preco ? `R$ ${Number(v.preco).toLocaleString('pt-BR')}` : 'Consulte';
+  const badge = v.badge ? `<div class="cc-badge">${v.badge}</div>` : '';
+  const hasManyFotos = imagens.length > 1;
+  const dots = imagens.length > 0
+    ? `<div class="cc-dots">${imagens.map((_,i) => `<div class="cc-dot${i===0?' on':''}"></div>`).join('')}</div>`
+    : '<div class="cc-dots"><div class="cc-dot on"></div></div>';
+  return `
+    <div class="car-card reveal">
+      <div class="cc-img-wrap" ${hasManyFotos ? `data-images='${imagensJSON}' data-current="0"` : ''}>
+        ${primeiraFoto
+          ? `<img class="cc-img active" src="${primeiraFoto}" alt="${v.marca} ${v.modelo}"><img class="cc-img next-img" src="" alt="">`
+          : `<div class="placeholder"><svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>Inserir foto</div>`}
+        ${badge}
+        ${hasManyFotos ? `<button class="cc-gallery-btn prev" onclick="cardGallery(this,-1)">&#8592;</button><button class="cc-gallery-btn next" onclick="cardGallery(this,1)">&#8594;</button>` : ''}
+        ${dots}
+      </div>
+      <div class="cc-info">
+        <div class="cc-brand"><div class="cc-brand-dot"></div>${v.marca}</div>
+        <div class="cc-name">${v.modelo}</div>
+        <div class="cc-meta">KM: ${Number(v.km).toLocaleString('pt-BR')} &nbsp;·&nbsp; Ano: ${v.ano} &nbsp;·&nbsp; ${v.combustivel}</div>
+        <div class="cc-footer">
+          <div class="cc-price">${preco}</div>
+          <button class="cc-btn" onclick="openModalDynamic('${v.id}')">Detalhes →</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+async function loadDestaques() {
+  const { data } = await sb.from('veiculos').select('*, fotos_veiculos(url, ordem)').eq('destaque', true).eq('ativo', true).order('created_at', { ascending: false }).limit(4);
+  const grid = document.getElementById('destaquesGrid');
+  if (!data || data.length === 0) { grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:48px;color:var(--gray2)">Nenhum destaque cadastrado</div>'; return; }
+  grid.innerHTML = data.map(renderCard).join('');
+  initReveal();
+}
+
+async function loadEstoque() {
+  const { data } = await sb.from('veiculos').select('*, fotos_veiculos(url, ordem)').eq('ativo', true).eq('destaque', false).order('created_at', { ascending: false });
+  const grid = document.getElementById('estoqueGrid');
+  if (!data || data.length === 0) { grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:48px;color:var(--gray2)">Nenhum veículo no estoque</div>'; return; }
+  grid.innerHTML = data.map(renderCard).join('');
+  initReveal();
+}
+
+async function openModalDynamic(id) {
+  const { data: v } = await sb.from('veiculos').select('*, fotos_veiculos(url, ordem)').eq('id', id).single();
+  if (!v) return;
+  const fotos = v.fotos_veiculos?.sort((a,b) => a.ordem - b.ordem) || [];
+  const preco = v.exibir_preco && v.preco ? `R$ ${Number(v.preco).toLocaleString('pt-BR')}` : 'Consultar preço';
+  const descParagrafos = v.descricao ? v.descricao.split('\n').filter(Boolean) : [];
+  currentVehicle = {
+    brand: v.marca, name: v.modelo, year: `${v.ano}`, price: preco,
+    priceTraoca: v.preco_com_troca ? `Com troca: R$ ${Number(v.preco_com_troca).toLocaleString('pt-BR')}` : '',
+    images: fotos.map(f => f.url),
+    specs: [
+      { label:'Quilometragem', value:`${Number(v.km).toLocaleString('pt-BR')} km` },
+      { label:'Ano', value:String(v.ano) },
+      { label:'Cor', value:v.cor||'—' },
+      { label:'Combustível', value:v.combustivel },
+      { label:'Motor', value:v.motor||'—' },
+      { label:'Potência', value:v.potencia||'—' },
+      { label:'Câmbio', value:v.cambio||'—' },
+      { label:'Blindagem', value:v.blindado?'Sim':'Não' },
+    ],
+    desc: descParagrafos,
+    opts: v.opcionais || [],
+    wpp: `https://wa.me/5551999999999?text=Olá! Tenho interesse no ${v.marca} ${v.modelo} ${v.ano}.`
+  };
+  document.getElementById('modalBrand').textContent = currentVehicle.brand;
+  document.getElementById('modalName').textContent = currentVehicle.name;
+  document.getElementById('modalYear').textContent = currentVehicle.year;
+  document.getElementById('modalPrice').textContent = currentVehicle.price;
+  document.getElementById('modalPriceTraoca').textContent = currentVehicle.priceTraoca;
+  const imgMain = document.getElementById('modalImgMain');
+  const imgActive = imgMain.querySelector('img.active');
+  const imgNextEl = imgMain.querySelector('img.next-img');
+  if (currentVehicle.images.length > 0) { imgActive.src = currentVehicle.images[0]; imgNextEl.src = ''; }
+  const thumbsEl = document.getElementById('modalThumbs');
+  thumbsEl.innerHTML = '';
+  if (currentVehicle.images.length > 1) {
+    currentVehicle.images.forEach((img, i) => {
+      const t = document.createElement('div');
+      t.className = 'modal-thumb' + (i===0?' active':'');
+      t.innerHTML = `<img src="${img}" alt="">`;
+      t.onclick = () => { imgActive.src = img; thumbsEl.querySelectorAll('.modal-thumb').forEach(x=>x.classList.remove('active')); t.classList.add('active'); modalImgIndex=i; };
+      thumbsEl.appendChild(t);
+    });
+  }
+  document.getElementById('modalSpecs').innerHTML = currentVehicle.specs.map(s => `<div class="spec-item"><div class="spec-label">${s.label}</div><div class="spec-value">${s.value}</div></div>`).join('');
+  document.getElementById('modalDesc').innerHTML = currentVehicle.desc.map(p=>`<p>${p}</p>`).join('');
+  const optsEl = document.getElementById('modalOpts');
+  const optsTitleEl = document.getElementById('modalOptsTitle');
+  if (currentVehicle.opts.length > 0) { optsTitleEl.textContent='Opcionais de Destaque'; optsEl.innerHTML=currentVehicle.opts.map(o=>`<div class="modal-opt">${o}</div>`).join(''); }
+  else { optsTitleEl.textContent=''; optsEl.innerHTML=''; }
+  document.getElementById('modalWpp').href = currentVehicle.wpp;
+  modalImgIndex = 0;
+  document.getElementById('modalOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function initReveal() {
+  document.querySelectorAll('.reveal:not(.animate)').forEach(r => { r.classList.add('animate'); io.observe(r); });
+}
+
+loadDestaques();
+loadEstoque();
 </script>
 </body>
 </html>
