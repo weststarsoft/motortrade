@@ -259,20 +259,7 @@ tr:hover td { background:rgba(255,255,255,0.02); }
 .upload-area p { font-size:13px; color:var(--gray); }
 .upload-area span { font-size:11px; color:var(--gray2); margin-top:4px; display:block; }
 
-.fotos-preview { display:flex; flex-wrap:wrap; gap:10px; margin-top:14px; }
-.foto-thumb {
-  width:80px; height:60px; border-radius:6px;
-  object-fit:cover; border:2px solid transparent;
-  position:relative;
-}
-.foto-thumb-wrap { position:relative; }
-.foto-thumb-wrap .remove-foto {
-  position:absolute; top:-6px; right:-6px;
-  width:18px; height:18px; border-radius:50%;
-  background:var(--red); color:#fff; font-size:10px;
-  display:flex; align-items:center; justify-content:center;
-  cursor:pointer; border:none;
-}
+.fotos-preview { display:flex; flex-wrap:wrap; gap:16px; margin-top:14px; }
 
 .modal-footer {
   padding:20px 28px;
@@ -310,21 +297,19 @@ tr:hover td { background:rgba(255,255,255,0.02); }
 .btn-show:hover { background:rgba(100,200,100,0.1); }
 
 /* foto ordering */
-.fotos-preview { display:flex; flex-wrap:wrap; gap:10px; margin-top:14px; }
+.fotos-preview { display:flex; flex-wrap:wrap; gap:16px; margin-top:14px; padding-bottom:8px; }
 .foto-thumb-wrap {
-  position:relative; cursor:grab;
-  border:2px solid transparent; border-radius:8px;
-  transition:border-color .2s;
+  position:relative;
+  padding-bottom:22px;
+  border-radius:8px;
 }
-.foto-thumb-wrap:hover { border-color:var(--border2); }
-.foto-thumb-wrap.is-first { border-color:var(--white); }
+.foto-thumb-wrap.is-first .foto-thumb { border:2px solid var(--white); }
 .foto-thumb-wrap.is-first::after {
-  content:'Capa'; position:absolute; bottom:0; left:0; right:0;
-  background:rgba(0,0,0,0.75); color:var(--white);
-  font-size:9px; font-weight:700; letter-spacing:.12em; text-transform:uppercase;
-  text-align:center; padding:3px; border-radius:0 0 6px 6px;
+  content:'✓ Capa'; position:absolute; bottom:2px; left:0; right:0;
+  color:var(--white); font-size:9px; font-weight:700;
+  letter-spacing:.1em; text-transform:uppercase; text-align:center;
 }
-.foto-thumb { width:80px; height:60px; border-radius:6px; object-fit:cover; display:block; }
+.foto-thumb { width:80px; height:60px; border-radius:6px; object-fit:cover; display:block; border:2px solid transparent; }
 .foto-thumb-wrap .remove-foto {
   position:absolute; top:-6px; right:-6px;
   width:18px; height:18px; border-radius:50%;
@@ -333,11 +318,11 @@ tr:hover td { background:rgba(255,255,255,0.02); }
   cursor:pointer; border:none; z-index:2;
 }
 .foto-set-capa {
-  position:absolute; bottom:-6px; left:50%; transform:translateX(-50%);
-  background:var(--bg3); border:1px solid var(--border2); color:var(--gray);
-  font-size:8px; font-weight:700; letter-spacing:.1em; text-transform:uppercase;
-  padding:2px 6px; border-radius:4px; cursor:pointer; white-space:nowrap;
-  transition:background .2s, color .2s;
+  position:absolute; bottom:2px; left:50%; transform:translateX(-50%);
+  background:var(--bg4); border:1px solid var(--border2); color:var(--gray);
+  font-size:8px; font-weight:700; letter-spacing:.08em; text-transform:uppercase;
+  padding:2px 8px; border-radius:4px; cursor:pointer; white-space:nowrap;
+  transition:background .2s, color .2s; display:block;
 }
 .foto-set-capa:hover { background:var(--white); color:#000; }
 
@@ -711,6 +696,7 @@ let currentUser = null;
 let editingId = null;
 let fotosParaUpload = [];
 let fotosExistentes = [];
+let heroFotoParaUpload = null;
 
 // ══ AUTH ══
 async function doLogin() {
@@ -780,7 +766,7 @@ async function loadDashboard() {
 }
 
 async function loadVeiculos() {
-  const { data } = await sb.from('veiculos').select('*, fotos_veiculos(url, ordem)').eq('ativo', true).order('created_at', { ascending: false });
+  const { data } = await sb.from('veiculos').select('*, fotos_veiculos(url, ordem)').order('created_at', { ascending: false });
   const tbody = document.getElementById('veiculosTable');
   tbody.innerHTML = data && data.length ? data.map(v => rowHTML(v, true)).join('') : emptyRow(7);
 }
@@ -879,6 +865,9 @@ function openModalNovo(categoria = 'normal') {
   editingId = null;
   fotosParaUpload = [];
   fotosExistentes = [];
+  heroFotoParaUpload = null;
+  document.getElementById('heroFotoPreview').style.display = 'none';
+  document.getElementById('heroFotoInput').value = '';
   document.getElementById('modalTitle').textContent = 'Novo Veículo';
   document.getElementById('veiculoModal').classList.add('open');
   document.body.style.overflow = 'hidden';
@@ -941,20 +930,82 @@ function closeModal() {
 }
 
 function previewFotos(input) {
+  fotosParaUpload = [...fotosParaUpload, ...Array.from(input.files)];
+  renderFotosPreview();
+}
+
+function renderFotosPreview() {
   const preview = document.getElementById('fotosPreview');
-  const existingHTML = fotosExistentes.map(f => `
-    <div class="foto-thumb-wrap">
+  // Existing photos
+  const existingHTML = fotosExistentes.map((f, i) => `
+    <div class="foto-thumb-wrap ${i===0?'is-first':''}" data-type="existing" data-id="${f.id}" data-ordem="${i}">
       <img class="foto-thumb" src="${f.url}" alt="">
       <button class="remove-foto" onclick="removerFotoExistente('${f.id}')">✕</button>
+      ${i > 0 ? `<button class="foto-set-capa" onclick="setCapa('existing','${f.id}')">Definir capa</button>` : ''}
     </div>`).join('');
-
-  const newHTML = Array.from(input.files).map((file, i) => {
+  // New photos
+  const newHTML = fotosParaUpload.map((file, i) => {
     const url = URL.createObjectURL(file);
-    return `<div class="foto-thumb-wrap"><img class="foto-thumb" src="${url}" alt=""></div>`;
+    const isFirst = fotosExistentes.length === 0 && i === 0;
+    return `<div class="foto-thumb-wrap ${isFirst?'is-first':''}" data-type="new" data-index="${i}">
+      <img class="foto-thumb" src="${url}" alt="">
+      <button class="remove-foto" onclick="removerFotoNova(${i})">✕</button>
+      ${!isFirst ? `<button class="foto-set-capa" onclick="setCapa('new',${i})">Definir capa</button>` : ''}
+    </div>`;
   }).join('');
-
-  fotosParaUpload = Array.from(input.files);
   preview.innerHTML = existingHTML + newHTML;
+}
+
+function setCapa(type, idOrIndex) {
+  if (type === 'existing') {
+    const idx = fotosExistentes.findIndex(f => f.id === idOrIndex);
+    if (idx > 0) {
+      const [item] = fotosExistentes.splice(idx, 1);
+      fotosExistentes.unshift(item);
+    }
+  } else {
+    const i = parseInt(idOrIndex);
+    if (i > 0) {
+      const [item] = fotosParaUpload.splice(i, 1);
+      fotosParaUpload.unshift(item);
+    }
+  }
+  renderFotosPreview();
+}
+
+function removerFotoNova(index) {
+  fotosParaUpload.splice(index, 1);
+  renderFotosPreview();
+}
+
+function previewHeroFoto(input) {
+  if (!input.files[0]) return;
+  heroFotoParaUpload = input.files[0];
+  const url = URL.createObjectURL(input.files[0]);
+  const preview = document.getElementById('heroFotoPreview');
+  preview.src = url;
+  preview.style.display = 'block';
+}
+
+async function ocultarVeiculo(id, exibir) {
+  // Visual feedback no botão
+  const btn = event.currentTarget;
+  const textoOriginal = btn.textContent;
+  btn.textContent = '...';
+  btn.disabled = true;
+
+  const { error } = await sb.from('veiculos').update({ ativo: exibir }).eq('id', id);
+
+  if (error) {
+    showToast('Erro ao atualizar veículo', 'error');
+    btn.textContent = textoOriginal;
+    btn.disabled = false;
+    return;
+  }
+
+  showToast(exibir ? '✓ Veículo exibido no site' : '✓ Veículo ocultado do site', 'success');
+  loadVeiculos();
+  loadDashboard();
 }
 
 async function removerFotoExistente(fotoId) {
@@ -1012,7 +1063,23 @@ async function salvarVeiculo() {
     veiculoId = data.id;
   }
 
-  // Upload fotos
+  // Upload hero foto first (ordem -1 so it comes first)
+  if (heroFotoParaUpload) {
+    const ext = heroFotoParaUpload.name.split('.').pop();
+    const path = `${veiculoId}/hero-${Date.now()}.${ext}`;
+    const { error: heroErr } = await sb.storage.from('fotos-veiculos').upload(path, heroFotoParaUpload, { upsert: true });
+    if (!heroErr) {
+      const { data: urlData } = sb.storage.from('fotos-veiculos').getPublicUrl(path);
+      // Remove existing hero foto if editing
+      if (editingId) {
+        const heroFotos = fotosExistentes.filter(f => f.url.includes('/hero-'));
+        for (const hf of heroFotos) await sb.from('fotos_veiculos').delete().eq('id', hf.id);
+      }
+      await sb.from('fotos_veiculos').insert({ veiculo_id: veiculoId, url: urlData.publicUrl, ordem: -1 });
+    }
+  }
+
+  // Upload regular fotos respecting order
   for (let i = 0; i < fotosParaUpload.length; i++) {
     const file = fotosParaUpload[i];
     const ext = file.name.split('.').pop();
@@ -1022,6 +1089,11 @@ async function salvarVeiculo() {
       const { data: urlData } = sb.storage.from('fotos-veiculos').getPublicUrl(path);
       await sb.from('fotos_veiculos').insert({ veiculo_id: veiculoId, url: urlData.publicUrl, ordem: fotosExistentes.length + i });
     }
+  }
+
+  // Update existing fotos order
+  for (let i = 0; i < fotosExistentes.length; i++) {
+    await sb.from('fotos_veiculos').update({ ordem: i }).eq('id', fotosExistentes[i].id);
   }
 
   showToast(editingId ? 'Veículo atualizado!' : 'Veículo criado!', 'success');
