@@ -18,8 +18,8 @@
   --white:   #ffffff;
   --gray:    #999;
   --gray2:   #555;
-  --accent:  #aaff00;
-  --accent2: #ccff44;
+  --accent:  #e8e8e8;
+  --accent2: #ffffff;
   --red:     #ff4444;
   --blue:    #4488ff;
 }
@@ -33,7 +33,7 @@ body { background:var(--bg); color:var(--white); font-family:'Barlow',sans-serif
 #loginScreen {
   min-height:100vh; display:flex; align-items:center; justify-content:center;
   background:var(--bg);
-  background-image: radial-gradient(ellipse 60% 40% at 50% 0%, rgba(170,255,0,0.06) 0%, transparent 60%);
+  background-image: radial-gradient(ellipse 60% 40% at 50% 0%, rgba(255,255,255,0.03) 0%, transparent 60%);
 }
 .login-box {
   background:var(--bg2); border:1px solid var(--border2);
@@ -193,7 +193,7 @@ tr:hover td { background:rgba(255,255,255,0.02); }
 .td-img { width:64px; height:42px; border-radius:6px; object-fit:cover; background:var(--bg3); display:block; }
 .td-img-placeholder { width:64px; height:42px; border-radius:6px; background:var(--bg3); display:flex; align-items:center; justify-content:center; }
 .td-img-placeholder svg { opacity:.3; }
-.badge-destaque { background:rgba(170,255,0,0.15); color:var(--accent); font-size:9px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; padding:3px 8px; border-radius:100px; border:1px solid rgba(170,255,0,0.3); }
+.badge-destaque { background:rgba(255,255,255,0.1); color:var(--white); font-size:9px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; padding:3px 8px; border-radius:100px; border:1px solid rgba(255,255,255,0.25); }
 .badge-normal { background:var(--bg3); color:var(--gray); font-size:9px; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; padding:3px 8px; border-radius:100px; }
 .badge-eletrico { background:rgba(68,136,255,0.15); color:var(--blue); font-size:9px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; padding:3px 8px; border-radius:100px; border:1px solid rgba(68,136,255,0.3); }
 .td-actions { display:flex; gap:8px; align-items:center; }
@@ -292,7 +292,64 @@ tr:hover td { background:rgba(255,255,255,0.02); }
 .hero-slot-num { font-size:9px; font-weight:700; letter-spacing:0.18em; text-transform:uppercase; color:var(--accent); margin-bottom:6px; }
 .hero-slot-name { font-family:'Barlow Condensed',sans-serif; font-size:16px; font-weight:700; text-transform:uppercase; margin-bottom:12px; color:var(--gray); }
 
-/* ══ TOAST ══ */
+.btn-hide {
+  background:none; border:1px solid rgba(255,165,0,0.3); color:#ffaa44;
+  font-family:'Barlow',sans-serif; font-size:10px; font-weight:600;
+  letter-spacing:0.1em; text-transform:uppercase;
+  padding:6px 12px; border-radius:4px; cursor:pointer;
+  transition:background .2s;
+}
+.btn-hide:hover { background:rgba(255,165,0,0.1); }
+.btn-show {
+  background:none; border:1px solid rgba(100,200,100,0.3); color:#88dd88;
+  font-family:'Barlow',sans-serif; font-size:10px; font-weight:600;
+  letter-spacing:0.1em; text-transform:uppercase;
+  padding:6px 12px; border-radius:4px; cursor:pointer;
+  transition:background .2s;
+}
+.btn-show:hover { background:rgba(100,200,100,0.1); }
+
+/* foto ordering */
+.fotos-preview { display:flex; flex-wrap:wrap; gap:10px; margin-top:14px; }
+.foto-thumb-wrap {
+  position:relative; cursor:grab;
+  border:2px solid transparent; border-radius:8px;
+  transition:border-color .2s;
+}
+.foto-thumb-wrap:hover { border-color:var(--border2); }
+.foto-thumb-wrap.is-first { border-color:var(--white); }
+.foto-thumb-wrap.is-first::after {
+  content:'Capa'; position:absolute; bottom:0; left:0; right:0;
+  background:rgba(0,0,0,0.75); color:var(--white);
+  font-size:9px; font-weight:700; letter-spacing:.12em; text-transform:uppercase;
+  text-align:center; padding:3px; border-radius:0 0 6px 6px;
+}
+.foto-thumb { width:80px; height:60px; border-radius:6px; object-fit:cover; display:block; }
+.foto-thumb-wrap .remove-foto {
+  position:absolute; top:-6px; right:-6px;
+  width:18px; height:18px; border-radius:50%;
+  background:var(--red); color:#fff; font-size:10px;
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer; border:none; z-index:2;
+}
+.foto-set-capa {
+  position:absolute; bottom:-6px; left:50%; transform:translateX(-50%);
+  background:var(--bg3); border:1px solid var(--border2); color:var(--gray);
+  font-size:8px; font-weight:700; letter-spacing:.1em; text-transform:uppercase;
+  padding:2px 6px; border-radius:4px; cursor:pointer; white-space:nowrap;
+  transition:background .2s, color .2s;
+}
+.foto-set-capa:hover { background:var(--white); color:#000; }
+
+/* hero upload */
+.hero-upload-wrap {
+  border:2px dashed var(--border2); border-radius:8px;
+  padding:20px; text-align:center; cursor:pointer;
+  transition:border-color .25s; position:relative; margin-top:10px;
+}
+.hero-upload-wrap:hover { border-color:var(--white); }
+.hero-upload-wrap input { position:absolute; inset:0; opacity:0; cursor:pointer; }
+.hero-upload-preview { width:100%; aspect-ratio:16/9; border-radius:6px; object-fit:cover; margin-top:10px; display:none; }
 .toast {
   position:fixed; bottom:24px; right:24px; z-index:1000;
   background:var(--bg3); border:1px solid var(--border2);
@@ -304,10 +361,10 @@ tr:hover td { background:rgba(255,255,255,0.02); }
   max-width:360px;
 }
 .toast.show { transform:translateY(0); opacity:1; }
-.toast.success { border-color:rgba(170,255,0,0.4); }
+.toast.success { border-color:rgba(255,255,255,0.3); }
 .toast.error { border-color:rgba(255,68,68,0.4); }
 .toast-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
-.toast.success .toast-dot { background:var(--accent); }
+.toast.success .toast-dot { background:var(--white); }
 .toast.error .toast-dot { background:var(--red); }
 
 /* Loading */
@@ -605,6 +662,7 @@ tr:hover td { background:rgba(255,255,255,0.02); }
 
       <div class="form-divider"></div>
       <div class="form-section-title">Fotos do Veículo</div>
+      <div style="font-size:11px;color:var(--gray);margin-bottom:12px;">Clique em <strong style="color:var(--white)">Definir como capa</strong> na foto para escolher qual aparece primeiro no card.</div>
       <div class="upload-area" id="uploadArea">
         <input type="file" id="fotoInput" multiple accept="image/*" onchange="previewFotos(this)">
         <svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
@@ -612,6 +670,17 @@ tr:hover td { background:rgba(255,255,255,0.02); }
         <span>JPG, PNG — Máximo 5MB cada</span>
       </div>
       <div class="fotos-preview" id="fotosPreview"></div>
+
+      <div class="form-divider"></div>
+      <div class="form-section-title">Foto do Banner Hero</div>
+      <div style="font-size:11px;color:var(--gray);margin-bottom:12px;">Formato paisagem <strong style="color:var(--white)">16:9</strong> — aparece no carrossel da página inicial. Ideal: 1920×1080px.</div>
+      <div class="hero-upload-wrap" id="heroUploadWrap">
+        <input type="file" id="heroFotoInput" accept="image/*" onchange="previewHeroFoto(this)">
+        <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" style="opacity:.4;margin-bottom:8px;"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+        <p style="font-size:13px;color:var(--gray);">Clique para adicionar foto do hero</p>
+        <span style="font-size:11px;color:var(--gray2);">JPG, PNG — Proporção 16:9</span>
+        <img id="heroFotoPreview" class="hero-upload-preview" src="" alt="Preview hero">
+      </div>
 
     </div>
     <div class="modal-footer">
@@ -765,16 +834,21 @@ function rowHTML(v, actions) {
     : `<div class="td-img-placeholder"><svg width="20" height="20" fill="none" stroke="#555" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>`;
   const badge = v.destaque ? '<span class="badge-destaque">Destaque</span>' : v.categoria === 'eletrico' ? '<span class="badge-eletrico">Elétrico</span>' : '<span class="badge-normal">Normal</span>';
   const preco = v.preco ? `R$ ${Number(v.preco).toLocaleString('pt-BR')}` : '<span style="color:var(--gray)">Consulte</span>';
+  const ocultarBtn = v.ativo
+    ? `<button class="btn-hide" onclick="ocultarVeiculo('${v.id}', false)">Ocultar</button>`
+    : `<button class="btn-show" onclick="ocultarVeiculo('${v.id}', true)">Exibir</button>`;
+  const statusBadge = !v.ativo ? '<span style="font-size:9px;color:#ffaa44;border:1px solid rgba(255,165,0,0.3);padding:2px 8px;border-radius:100px;">Oculto</span>' : badge;
 
-  return `<tr>
+  return `<tr style="${!v.ativo ? 'opacity:0.5;' : ''}">
     <td>${imgHTML}</td>
     <td><strong>${v.marca}</strong> ${v.modelo}</td>
     <td><span style="font-family:'Space Mono',monospace;font-size:12px;">${v.ano} · ${Number(v.km).toLocaleString('pt-BR')} km</span></td>
     <td><span style="font-family:'Space Mono',monospace;font-size:13px;">${preco}</span></td>
-    ${actions ? `<td>${badge}</td>` : ''}
-    <td>${badge}</td>
+    ${actions ? `<td>${statusBadge}</td>` : ''}
+    <td>${statusBadge}</td>
     ${actions ? `<td><div class="td-actions">
       <button class="btn-secondary" style="padding:6px 10px;" onclick="editarVeiculo('${v.id}')">Editar</button>
+      ${ocultarBtn}
       <button class="btn-danger" onclick="deletarVeiculo('${v.id}')">Remover</button>
     </div></td>` : ''}
   </tr>`;
