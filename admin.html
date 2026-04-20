@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Motor Trade — Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700;800&family=Barlow+Condensed:wght@600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root {
+  --bg:      #0f0f0f;
+  --bg2:     #161616;
+  --bg3:     #1e1e1e;
+  --bg4:     #252525;
+  --border:  rgba(255,255,255,0.08);
+  --border2: rgba(255,255,255,0.14);
+  --white:   #ffffff;
+  --gray:    #999;
+  --gray2:   #555;
+  --accent:  #aaff00;
+  --accent2: #ccff44;
+  --red:     #ff4444;
+  --blue:    #4488ff;
+}
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body { background:var(--bg); color:var(--white); font-family:'Barlow',sans-serif; font-weight:400; overflow-x:hidden; }
+::-webkit-scrollbar{width:4px} ::-webkit-scrollbar-track{background:var(--bg)} ::-webkit-scrollbar-thumb{background:var(--gray2)}
+
+/* ══ LOGIN ══ */
+#loginScreen {
+  min-height:100vh; display:flex; align-items:center; justify-content:center;
+  background:var(--bg);
+  background-image: radial-gradient(ellipse 60% 40% at 50% 0%, rgba(170,255,0,0.06) 0%, transparent 60%);
+}
+.login-box {
+  background:var(--bg2); border:1px solid var(--border2);
+  border-radius:16px; padding:48px; width:100%; max-width:420px;
+}
+.login-logo {
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:24px; font-weight:800; letter-spacing:0.1em; text-transform:uppercase;
+  margin-bottom:8px;
+}
+.login-logo span { color:var(--gray); font-weight:500; }
+.login-sub { font-size:12px; color:var(--gray); margin-bottom:36px; letter-spacing:0.04em; }
+.login-label { font-size:10px; font-weight:600; letter-spacing:0.16em; text-transform:uppercase; color:var(--gray); margin-bottom:8px; display:block; }
+.login-input {
+  width:100%; background:var(--bg3); border:1px solid var(--border2);
+  border-radius:6px; padding:12px 16px; color:var(--white);
+  font-family:'Barlow',sans-serif; font-size:14px; margin-bottom:16px;
+  outline:none; transition:border-color .25s;
+}
+.login-input:focus { border-color:var(--accent); }
+.login-btn {
+  width:100%; background:var(--accent); color:#000;
+  font-family:'Barlow',sans-serif; font-size:12px; font-weight:700;
+  letter-spacing:0.14em; text-transform:uppercase;
+  padding:14px; border:none; border-radius:6px; cursor:pointer;
+  transition:background .25s, transform .2s; margin-top:8px;
+}
+.login-btn:hover { background:var(--accent2); transform:translateY(-1px); }
+.login-error { font-size:12px; color:var(--red); margin-top:12px; text-align:center; }
+
+/* ══ ADMIN LAYOUT ══ */
+#adminScreen { display:none; min-height:100vh; }
+
+.admin-sidebar {
+  position:fixed; top:0; left:0; bottom:0; width:240px;
+  background:var(--bg2); border-right:1px solid var(--border);
+  display:flex; flex-direction:column; z-index:100;
+}
+.sidebar-logo {
+  padding:24px 24px 20px;
+  border-bottom:1px solid var(--border);
+}
+.sidebar-logo-text {
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:18px; font-weight:800; letter-spacing:0.1em; text-transform:uppercase;
+}
+.sidebar-logo-text span { color:var(--gray); font-weight:500; }
+.sidebar-badge {
+  display:inline-block; background:var(--accent); color:#000;
+  font-size:8px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase;
+  padding:2px 8px; border-radius:100px; margin-top:6px;
+}
+
+.sidebar-nav { flex:1; padding:16px 12px; overflow-y:auto; }
+.nav-section { font-size:9px; font-weight:700; letter-spacing:0.2em; text-transform:uppercase; color:var(--gray2); padding:8px 12px 6px; }
+.nav-item {
+  display:flex; align-items:center; gap:10px;
+  padding:10px 12px; border-radius:6px; cursor:pointer;
+  font-size:13px; font-weight:500; color:var(--gray);
+  transition:background .2s, color .2s; margin-bottom:2px;
+  border:none; background:none; width:100%; text-align:left;
+}
+.nav-item svg { width:16px; height:16px; flex-shrink:0; }
+.nav-item:hover { background:var(--bg3); color:var(--white); }
+.nav-item.active { background:var(--bg4); color:var(--white); }
+.nav-item.active svg { color:var(--accent); }
+
+.sidebar-footer {
+  padding:16px;
+  border-top:1px solid var(--border);
+}
+.sidebar-user { font-size:11px; color:var(--gray); margin-bottom:10px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.btn-logout {
+  width:100%; background:none; border:1px solid var(--border2);
+  color:var(--gray); font-family:'Barlow',sans-serif; font-size:10px;
+  font-weight:600; letter-spacing:0.12em; text-transform:uppercase;
+  padding:8px; border-radius:6px; cursor:pointer;
+  transition:border-color .25s, color .25s;
+}
+.btn-logout:hover { border-color:var(--red); color:var(--red); }
+
+/* ══ MAIN CONTENT ══ */
+.admin-main {
+  margin-left:240px;
+  min-height:100vh;
+  display:flex; flex-direction:column;
+}
+
+.admin-topbar {
+  background:var(--bg2); border-bottom:1px solid var(--border);
+  padding:0 32px; height:60px;
+  display:flex; align-items:center; justify-content:space-between;
+  position:sticky; top:0; z-index:50;
+}
+.topbar-title {
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:18px; font-weight:800; text-transform:uppercase; letter-spacing:0.06em;
+}
+.topbar-actions { display:flex; gap:10px; }
+
+.admin-content { padding:32px; flex:1; }
+
+/* ══ PANELS ══ */
+.panel { display:none; }
+.panel.active { display:block; }
+
+/* ══ STATS CARDS ══ */
+.stats-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:32px; }
+.stat-card {
+  background:var(--bg2); border:1px solid var(--border);
+  border-radius:10px; padding:20px 24px;
+}
+.stat-num { font-family:'Space Mono',monospace; font-size:28px; font-weight:700; color:var(--white); margin-bottom:4px; }
+.stat-num.accent { color:var(--accent); }
+.stat-label { font-size:10px; letter-spacing:0.14em; text-transform:uppercase; color:var(--gray); }
+
+/* ══ TABLE ══ */
+.section-header {
+  display:flex; justify-content:space-between; align-items:center;
+  margin-bottom:20px;
+}
+.section-title { font-family:'Barlow Condensed',sans-serif; font-size:22px; font-weight:800; text-transform:uppercase; }
+.btn-primary {
+  display:flex; align-items:center; gap:8px;
+  background:var(--accent); color:#000;
+  font-family:'Barlow',sans-serif; font-size:10px; font-weight:700;
+  letter-spacing:0.14em; text-transform:uppercase;
+  padding:10px 20px; border:none; border-radius:6px; cursor:pointer;
+  transition:background .25s, transform .2s;
+}
+.btn-primary:hover { background:var(--accent2); transform:translateY(-1px); }
+.btn-secondary {
+  display:flex; align-items:center; gap:8px;
+  background:none; border:1px solid var(--border2); color:var(--gray);
+  font-family:'Barlow',sans-serif; font-size:10px; font-weight:600;
+  letter-spacing:0.12em; text-transform:uppercase;
+  padding:10px 18px; border-radius:6px; cursor:pointer;
+  transition:border-color .25s, color .25s;
+}
+.btn-secondary:hover { border-color:var(--white); color:var(--white); }
+.btn-danger {
+  background:none; border:1px solid rgba(255,68,68,0.3); color:var(--red);
+  font-family:'Barlow',sans-serif; font-size:10px; font-weight:600;
+  letter-spacing:0.1em; text-transform:uppercase;
+  padding:6px 12px; border-radius:4px; cursor:pointer;
+  transition:background .2s;
+}
+.btn-danger:hover { background:rgba(255,68,68,0.1); }
+
+.table-wrap { background:var(--bg2); border:1px solid var(--border); border-radius:10px; overflow:hidden; }
+table { width:100%; border-collapse:collapse; }
+thead { background:var(--bg3); }
+th { padding:12px 16px; text-align:left; font-size:9px; font-weight:700; letter-spacing:0.18em; text-transform:uppercase; color:var(--gray); border-bottom:1px solid var(--border); }
+td { padding:14px 16px; font-size:13px; border-bottom:1px solid var(--border); vertical-align:middle; }
+tr:last-child td { border-bottom:none; }
+tr:hover td { background:rgba(255,255,255,0.02); }
+.td-img { width:64px; height:42px; border-radius:6px; object-fit:cover; background:var(--bg3); display:block; }
+.td-img-placeholder { width:64px; height:42px; border-radius:6px; background:var(--bg3); display:flex; align-items:center; justify-content:center; }
+.td-img-placeholder svg { opacity:.3; }
+.badge-destaque { background:rgba(170,255,0,0.15); color:var(--accent); font-size:9px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; padding:3px 8px; border-radius:100px; border:1px solid rgba(170,255,0,0.3); }
+.badge-normal { background:var(--bg3); color:var(--gray); font-size:9px; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; padding:3px 8px; border-radius:100px; }
+.badge-eletrico { background:rgba(68,136,255,0.15); color:var(--blue); font-size:9px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; padding:3px 8px; border-radius:100px; border:1px solid rgba(68,136,255,0.3); }
+.td-actions { display:flex; gap:8px; align-items:center; }
+
+/* ══ MODAL FORM ══ */
+.modal-overlay {
+  position:fixed; inset:0; z-index:500;
+  background:rgba(0,0,0,0.85); backdrop-filter:blur(8px);
+  display:flex; align-items:center; justify-content:center;
+  padding:20px; opacity:0; pointer-events:none;
+  transition:opacity .3s;
+}
+.modal-overlay.open { opacity:1; pointer-events:all; }
+.modal-box {
+  background:var(--bg2); border:1px solid var(--border2);
+  border-radius:16px; width:100%; max-width:700px;
+  max-height:90vh; overflow-y:auto;
+  transform:translateY(24px);
+  transition:transform .4s cubic-bezier(.22,1,.36,1);
+}
+.modal-overlay.open .modal-box { transform:translateY(0); }
+.modal-header {
+  padding:24px 28px 20px;
+  border-bottom:1px solid var(--border);
+  display:flex; justify-content:space-between; align-items:center;
+  position:sticky; top:0; background:var(--bg2); z-index:5;
+}
+.modal-header h3 { font-family:'Barlow Condensed',sans-serif; font-size:20px; font-weight:800; text-transform:uppercase; }
+.modal-close-btn { background:none; border:1px solid var(--border2); color:var(--gray); width:32px; height:32px; border-radius:50%; cursor:pointer; font-size:16px; display:flex; align-items:center; justify-content:center; transition:background .2s; }
+.modal-close-btn:hover { background:var(--bg4); color:var(--white); }
+.modal-body { padding:28px; }
+
+/* Form */
+.form-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px; }
+.form-grid.full { grid-template-columns:1fr; }
+.form-group { display:flex; flex-direction:column; gap:6px; }
+.form-label { font-size:10px; font-weight:600; letter-spacing:0.16em; text-transform:uppercase; color:var(--gray); }
+.form-input, .form-select, .form-textarea {
+  background:var(--bg3); border:1px solid var(--border2);
+  border-radius:6px; padding:10px 14px; color:var(--white);
+  font-family:'Barlow',sans-serif; font-size:14px;
+  outline:none; transition:border-color .25s; width:100%;
+}
+.form-input:focus, .form-select:focus, .form-textarea:focus { border-color:var(--accent); }
+.form-select { cursor:pointer; }
+.form-select option { background:var(--bg3); }
+.form-textarea { resize:vertical; min-height:100px; }
+.form-check { display:flex; align-items:center; gap:10px; cursor:pointer; font-size:13px; color:var(--gray); }
+.form-check input { width:16px; height:16px; accent-color:var(--accent); cursor:pointer; }
+.form-divider { height:1px; background:var(--border); margin:20px 0; }
+.form-section-title { font-size:11px; font-weight:700; letter-spacing:0.16em; text-transform:uppercase; color:var(--white); margin-bottom:14px; }
+
+/* Upload */
+.upload-area {
+  border:2px dashed var(--border2); border-radius:8px;
+  padding:32px; text-align:center; cursor:pointer;
+  transition:border-color .25s, background .25s;
+  position:relative;
+}
+.upload-area:hover { border-color:var(--accent); background:rgba(170,255,0,0.03); }
+.upload-area input { position:absolute; inset:0; opacity:0; cursor:pointer; }
+.upload-area svg { opacity:.4; margin-bottom:10px; }
+.upload-area p { font-size:13px; color:var(--gray); }
+.upload-area span { font-size:11px; color:var(--gray2); margin-top:4px; display:block; }
+
+.fotos-preview { display:flex; flex-wrap:wrap; gap:10px; margin-top:14px; }
+.foto-thumb {
+  width:80px; height:60px; border-radius:6px;
+  object-fit:cover; border:2px solid transparent;
+  position:relative;
+}
+.foto-thumb-wrap { position:relative; }
+.foto-thumb-wrap .remove-foto {
+  position:absolute; top:-6px; right:-6px;
+  width:18px; height:18px; border-radius:50%;
+  background:var(--red); color:#fff; font-size:10px;
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer; border:none;
+}
+
+.modal-footer {
+  padding:20px 28px;
+  border-top:1px solid var(--border);
+  display:flex; justify-content:flex-end; gap:12px;
+}
+
+/* ══ HERO MANAGER ══ */
+.hero-slots { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:32px; }
+.hero-slot {
+  background:var(--bg2); border:1px solid var(--border);
+  border-radius:10px; overflow:hidden;
+}
+.hero-slot-img { aspect-ratio:16/9; background:var(--bg3); display:flex; align-items:center; justify-content:center; position:relative; }
+.hero-slot-img img { width:100%; height:100%; object-fit:cover; }
+.hero-slot-body { padding:16px; }
+.hero-slot-num { font-size:9px; font-weight:700; letter-spacing:0.18em; text-transform:uppercase; color:var(--accent); margin-bottom:6px; }
+.hero-slot-name { font-family:'Barlow Condensed',sans-serif; font-size:16px; font-weight:700; text-transform:uppercase; margin-bottom:12px; color:var(--gray); }
+
+/* ══ TOAST ══ */
+.toast {
+  position:fixed; bottom:24px; right:24px; z-index:1000;
+  background:var(--bg3); border:1px solid var(--border2);
+  border-radius:8px; padding:14px 20px;
+  font-size:13px; color:var(--white);
+  display:flex; align-items:center; gap:10px;
+  transform:translateY(80px); opacity:0;
+  transition:transform .35s cubic-bezier(.22,1,.36,1), opacity .35s;
+  max-width:360px;
+}
+.toast.show { transform:translateY(0); opacity:1; }
+.toast.success { border-color:rgba(170,255,0,0.4); }
+.toast.error { border-color:rgba(255,68,68,0.4); }
+.toast-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+.toast.success .toast-dot { background:var(--accent); }
+.toast.error .toast-dot { background:var(--red); }
+
+/* Loading */
+.loading { display:flex; align-items:center; justify-content:center; padding:48px; color:var(--gray); gap:12px; font-size:13px; }
+.spinner { width:20px; height:20px; border:2px solid var(--border2); border-top-color:var(--accent); border-radius:50%; animation:spin .7s linear infinite; }
+@keyframes spin { to { transform:rotate(360deg); } }
+
+.empty-state { text-align:center; padding:64px 32px; color:var(--gray); }
+.empty-state svg { opacity:.2; margin-bottom:16px; }
+.empty-state p { font-size:14px; }
+</style>
+</head>
+<body>
+
+<!-- ══ LOGIN ══ -->
+<div id="loginScreen">
+  <div class="login-box">
+    <div class="login-logo">Motor <span>Trade</span></div>
+    <div class="login-sub">Painel Administrativo — Acesso Restrito</div>
+    <label class="login-label">Email</label>
+    <input class="login-input" type="email" id="loginEmail" placeholder="contato@motortrade.com.br">
+    <label class="login-label">Senha</label>
+    <input class="login-input" type="password" id="loginPassword" placeholder="••••••••">
+    <button class="login-btn" onclick="doLogin()">Entrar no Painel</button>
+    <div class="login-error" id="loginError"></div>
+  </div>
+</div>
+
+<!-- ══ ADMIN ══ -->
+<div id="adminScreen">
+
+  <!-- Sidebar -->
+  <aside class="admin-sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-text">Motor <span>Trade</span></div>
+      <div class="sidebar-badge">⚡ Admin</div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section">Principal</div>
+      <button class="nav-item active" onclick="showPanel('dashboard')">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        Dashboard
+      </button>
+      <div class="nav-section">Veículos</div>
+      <button class="nav-item" onclick="showPanel('veiculos')">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 17H3a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v9a2 2 0 01-2 2h-3M9 21a2 2 0 004 0"/><circle cx="9" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>
+        Todos os Veículos
+      </button>
+      <button class="nav-item" onclick="showPanel('destaques')">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        Destaques
+      </button>
+      <button class="nav-item" onclick="showPanel('hero')">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+        Banners Hero
+      </button>
+      <button class="nav-item" onclick="showPanel('eletricos')">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        Elétricos
+      </button>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="sidebar-user" id="sidebarUser">—</div>
+      <button class="btn-logout" onclick="doLogout()">Sair do painel</button>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="admin-main">
+    <div class="admin-topbar">
+      <div class="topbar-title" id="topbarTitle">Dashboard</div>
+      <div class="topbar-actions">
+        <a href="index.html" target="_blank" class="btn-secondary" style="text-decoration:none;">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          Ver site
+        </a>
+      </div>
+    </div>
+
+    <div class="admin-content">
+
+      <!-- ══ DASHBOARD ══ -->
+      <div class="panel active" id="panel-dashboard">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-num accent" id="stat-total">—</div>
+            <div class="stat-label">Total de veículos</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num" id="stat-destaques">—</div>
+            <div class="stat-label">Em destaque</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num" id="stat-eletricos">—</div>
+            <div class="stat-label">Elétricos / Híbridos</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num" id="stat-hero">—</div>
+            <div class="stat-label">Slides no hero</div>
+          </div>
+        </div>
+
+        <div class="section-header">
+          <div class="section-title">Últimos adicionados</div>
+          <button class="btn-primary" onclick="showPanel('veiculos');openModalNovo()">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Novo veículo
+          </button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Foto</th><th>Veículo</th><th>Ano / KM</th><th>Preço</th><th>Status</th></tr></thead>
+            <tbody id="dashboardTable"><tr><td colspan="5"><div class="loading"><div class="spinner"></div> Carregando...</div></td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ══ TODOS VEÍCULOS ══ -->
+      <div class="panel" id="panel-veiculos">
+        <div class="section-header">
+          <div class="section-title">Todos os Veículos</div>
+          <button class="btn-primary" onclick="openModalNovo()">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Novo veículo
+          </button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Foto</th><th>Veículo</th><th>Ano / KM</th><th>Preço</th><th>Categoria</th><th>Status</th><th>Ações</th></tr></thead>
+            <tbody id="veiculosTable"><tr><td colspan="7"><div class="loading"><div class="spinner"></div> Carregando...</div></td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ══ DESTAQUES ══ -->
+      <div class="panel" id="panel-destaques">
+        <div class="section-header">
+          <div class="section-title">Veículos em Destaque</div>
+          <div style="font-size:12px;color:var(--gray)">Máximo 4 destaques simultâneos</div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Foto</th><th>Veículo</th><th>Ano / KM</th><th>Preço</th><th>Ações</th></tr></thead>
+            <tbody id="destaquesTable"><tr><td colspan="5"><div class="loading"><div class="spinner"></div> Carregando...</div></td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ══ HERO ══ -->
+      <div class="panel" id="panel-hero">
+        <div class="section-header">
+          <div class="section-title">Banners Hero</div>
+          <div style="font-size:12px;color:var(--gray)">3 slides no carrossel</div>
+        </div>
+        <div class="hero-slots" id="heroSlots">
+          <div class="loading"><div class="spinner"></div> Carregando...</div>
+        </div>
+      </div>
+
+      <!-- ══ ELÉTRICOS ══ -->
+      <div class="panel" id="panel-eletricos">
+        <div class="section-header">
+          <div class="section-title">Veículos Elétricos</div>
+          <button class="btn-primary" onclick="openModalNovo('eletrico')">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Novo elétrico
+          </button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Foto</th><th>Veículo</th><th>Ano / KM</th><th>Preço</th><th>Status</th><th>Ações</th></tr></thead>
+            <tbody id="eletricosTable"><tr><td colspan="6"><div class="loading"><div class="spinner"></div> Carregando...</div></td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<!-- ══ MODAL VEÍCULO ══ -->
+<div class="modal-overlay" id="veiculoModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3 id="modalTitle">Novo Veículo</h3>
+      <button class="modal-close-btn" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+
+      <div class="form-section-title">Informações Básicas</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">Marca *</label>
+          <input class="form-input" id="f-marca" placeholder="Ex: Porsche">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Modelo *</label>
+          <input class="form-input" id="f-modelo" placeholder="Ex: 911 Carrera S">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Ano *</label>
+          <input class="form-input" id="f-ano" type="number" placeholder="Ex: 2020">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Quilometragem *</label>
+          <input class="form-input" id="f-km" type="number" placeholder="Ex: 21000">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Combustível</label>
+          <select class="form-select" id="f-combustivel">
+            <option value="Gasolina">Gasolina</option>
+            <option value="Elétrico">Elétrico</option>
+            <option value="Gasolina e elétrico">Gasolina e elétrico (Híbrido)</option>
+            <option value="Diesel">Diesel</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Cor</label>
+          <input class="form-input" id="f-cor" placeholder="Ex: Verde Aventurine">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Motor</label>
+          <input class="form-input" id="f-motor" placeholder="Ex: 3.0 Boxer Biturbo">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Potência</label>
+          <input class="form-input" id="f-potencia" placeholder="Ex: 450 cv">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Câmbio</label>
+          <input class="form-input" id="f-cambio" placeholder="Ex: PDK 8 marchas">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Badge</label>
+          <input class="form-input" id="f-badge" placeholder="Ex: Destaque, Novo, Blindado">
+        </div>
+      </div>
+
+      <div class="form-divider"></div>
+      <div class="form-section-title">Preço</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">Preço (R$)</label>
+          <input class="form-input" id="f-preco" type="number" placeholder="Ex: 699900">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Preço com troca (R$)</label>
+          <input class="form-input" id="f-preco-troca" type="number" placeholder="Ex: 701900">
+        </div>
+      </div>
+      <label class="form-check">
+        <input type="checkbox" id="f-exibir-preco" checked>
+        Exibir preço no site
+      </label>
+
+      <div class="form-divider"></div>
+      <div class="form-section-title">Descrição</div>
+      <div class="form-grid full">
+        <div class="form-group">
+          <label class="form-label">Descrição completa</label>
+          <textarea class="form-textarea" id="f-descricao" placeholder="Descreva o veículo..."></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Opcionais (um por linha)</label>
+          <textarea class="form-textarea" id="f-opcionais" placeholder="Sistema de escape esportivo&#10;Teto solar elétrico&#10;Volante em couro..."></textarea>
+        </div>
+      </div>
+
+      <div class="form-divider"></div>
+      <div class="form-section-title">Categoria e Visibilidade</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">Categoria</label>
+          <select class="form-select" id="f-categoria">
+            <option value="normal">Normal</option>
+            <option value="eletrico">Elétrico</option>
+            <option value="hibrido">Híbrido</option>
+          </select>
+        </div>
+        <div class="form-group" style="justify-content:flex-end;gap:12px;">
+          <label class="form-check">
+            <input type="checkbox" id="f-destaque">
+            Marcar como Destaque
+          </label>
+          <label class="form-check">
+            <input type="checkbox" id="f-hero">
+            Colocar no Banner Hero
+          </label>
+          <label class="form-check">
+            <input type="checkbox" id="f-blindado">
+            Veículo blindado
+          </label>
+        </div>
+      </div>
+
+      <div class="form-divider"></div>
+      <div class="form-section-title">Fotos do Veículo</div>
+      <div class="upload-area" id="uploadArea">
+        <input type="file" id="fotoInput" multiple accept="image/*" onchange="previewFotos(this)">
+        <svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        <p>Clique ou arraste as fotos aqui</p>
+        <span>JPG, PNG — Máximo 5MB cada</span>
+      </div>
+      <div class="fotos-preview" id="fotosPreview"></div>
+
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeModal()">Cancelar</button>
+      <button class="btn-primary" onclick="salvarVeiculo()" id="btnSalvar">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+        Salvar veículo
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ TOAST ══ -->
+<div class="toast" id="toast">
+  <div class="toast-dot"></div>
+  <span id="toastMsg"></span>
+</div>
+
+<script>
+// ══════════════════════════════════
+// SUPABASE CONFIG
+// ══════════════════════════════════
+const SUPABASE_URL = 'https://qmhduizgxkadzaippbwi.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFtaGR1aXpneGthZHphaXBwYndpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3MTQyNDUsImV4cCI6MjA5MjI5MDI0NX0.wrB2K6JY4Y0ujltk0By6dXZ_nEDjHShRrDXCiiYHHN8';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+let currentUser = null;
+let editingId = null;
+let fotosParaUpload = [];
+let fotosExistentes = [];
+
+// ══ AUTH ══
+async function doLogin() {
+  const email = document.getElementById('loginEmail').value;
+  const pass  = document.getElementById('loginPassword').value;
+  const errEl = document.getElementById('loginError');
+  errEl.textContent = '';
+
+  const { data, error } = await sb.auth.signInWithPassword({ email, password: pass });
+  if (error) { errEl.textContent = 'Email ou senha incorretos.'; return; }
+
+  currentUser = data.user;
+  document.getElementById('sidebarUser').textContent = currentUser.email;
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('adminScreen').style.display = 'flex';
+  loadDashboard();
+  loadVeiculos();
+}
+
+async function doLogout() {
+  await sb.auth.signOut();
+  location.reload();
+}
+
+// Check session on load
+sb.auth.getSession().then(({ data }) => {
+  if (data.session) {
+    currentUser = data.session.user;
+    document.getElementById('sidebarUser').textContent = currentUser.email;
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('adminScreen').style.display = 'flex';
+    loadDashboard();
+    loadVeiculos();
+  }
+});
+
+// ══ NAVIGATION ══
+function showPanel(name) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('panel-' + name).classList.add('active');
+  event.currentTarget.classList.add('active');
+
+  const titles = { dashboard:'Dashboard', veiculos:'Todos os Veículos', destaques:'Destaques', hero:'Banners Hero', eletricos:'Elétricos' };
+  document.getElementById('topbarTitle').textContent = titles[name] || name;
+
+  if (name === 'destaques') loadDestaques();
+  if (name === 'hero') loadHero();
+  if (name === 'eletricos') loadEletricos();
+}
+
+// ══ LOAD DATA ══
+async function loadDashboard() {
+  const { data: veiculos } = await sb.from('veiculos').select('*').eq('ativo', true).order('created_at', { ascending: false });
+  if (!veiculos) return;
+
+  document.getElementById('stat-total').textContent = veiculos.length;
+  document.getElementById('stat-destaques').textContent = veiculos.filter(v => v.destaque).length;
+  document.getElementById('stat-eletricos').textContent = veiculos.filter(v => v.categoria === 'eletrico' || v.categoria === 'hibrido').length;
+
+  const { data: slides } = await sb.from('hero_slides').select('*').eq('ativo', true);
+  document.getElementById('stat-hero').textContent = slides ? slides.length : 0;
+
+  const recent = veiculos.slice(0, 5);
+  const tbody = document.getElementById('dashboardTable');
+  tbody.innerHTML = recent.length ? recent.map(v => rowHTML(v, false)).join('') : emptyRow(5);
+}
+
+async function loadVeiculos() {
+  const { data } = await sb.from('veiculos').select('*, fotos_veiculos(url, ordem)').eq('ativo', true).order('created_at', { ascending: false });
+  const tbody = document.getElementById('veiculosTable');
+  tbody.innerHTML = data && data.length ? data.map(v => rowHTML(v, true)).join('') : emptyRow(7);
+}
+
+async function loadDestaques() {
+  const { data } = await sb.from('veiculos').select('*, fotos_veiculos(url, ordem)').eq('destaque', true).eq('ativo', true);
+  const tbody = document.getElementById('destaquesTable');
+  tbody.innerHTML = data && data.length ? data.map(v => rowDestaque(v)).join('') : emptyRow(5, 'Nenhum veículo em destaque');
+}
+
+async function loadEletricos() {
+  const { data } = await sb.from('veiculos').select('*, fotos_veiculos(url, ordem)').in('categoria', ['eletrico','hibrido']).eq('ativo', true).order('created_at', { ascending:false });
+  const tbody = document.getElementById('eletricosTable');
+  tbody.innerHTML = data && data.length ? data.map(v => rowHTML(v, true)).join('') : emptyRow(6, 'Nenhum veículo elétrico');
+}
+
+async function loadHero() {
+  const { data: slides } = await sb.from('hero_slides').select('*, veiculos(marca, modelo, fotos_veiculos(url, ordem))').eq('ativo', true).order('ordem');
+  const { data: todos } = await sb.from('veiculos').select('id, marca, modelo').eq('ativo', true);
+
+  const container = document.getElementById('heroSlots');
+  const slotsHTML = [0,1,2].map(i => {
+    const slide = slides && slides[i];
+    const veiculo = slide?.veiculos;
+    const foto = veiculo?.fotos_veiculos?.sort((a,b)=>a.ordem-b.ordem)[0];
+    const options = todos ? todos.map(v => `<option value="${v.id}" ${slide?.veiculo_id === v.id ? 'selected' : ''}>${v.marca} ${v.modelo}</option>`).join('') : '';
+    return `
+      <div class="hero-slot">
+        <div class="hero-slot-img">
+          ${foto ? `<img src="${foto.url}" alt="">` : '<svg width="32" height="32" fill="none" stroke="#555" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>'}
+        </div>
+        <div class="hero-slot-body">
+          <div class="hero-slot-num">Slide ${i+1}</div>
+          <select class="form-select" id="hero-select-${i}" style="margin-bottom:10px;">
+            <option value="">— Selecionar veículo —</option>
+            ${options}
+          </select>
+          <input class="form-input" id="hero-tag-${i}" value="${slide?.tag || ''}" placeholder="Tag (ex: Destaque da semana)" style="margin-bottom:10px;">
+          <button class="btn-primary" style="width:100%;justify-content:center;" onclick="salvarHeroSlot(${i}, '${slide?.id || ''}')">Salvar slide</button>
+        </div>
+      </div>`;
+  }).join('');
+  container.innerHTML = slotsHTML;
+}
+
+// ══ ROW HELPERS ══
+function rowHTML(v, actions) {
+  const foto = v.fotos_veiculos?.sort((a,b) => a.ordem - b.ordem)[0];
+  const imgHTML = foto
+    ? `<img class="td-img" src="${foto.url}" alt="">`
+    : `<div class="td-img-placeholder"><svg width="20" height="20" fill="none" stroke="#555" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>`;
+  const badge = v.destaque ? '<span class="badge-destaque">Destaque</span>' : v.categoria === 'eletrico' ? '<span class="badge-eletrico">Elétrico</span>' : '<span class="badge-normal">Normal</span>';
+  const preco = v.preco ? `R$ ${Number(v.preco).toLocaleString('pt-BR')}` : '<span style="color:var(--gray)">Consulte</span>';
+
+  return `<tr>
+    <td>${imgHTML}</td>
+    <td><strong>${v.marca}</strong> ${v.modelo}</td>
+    <td><span style="font-family:'Space Mono',monospace;font-size:12px;">${v.ano} · ${Number(v.km).toLocaleString('pt-BR')} km</span></td>
+    <td><span style="font-family:'Space Mono',monospace;font-size:13px;">${preco}</span></td>
+    ${actions ? `<td>${badge}</td>` : ''}
+    <td>${badge}</td>
+    ${actions ? `<td><div class="td-actions">
+      <button class="btn-secondary" style="padding:6px 10px;" onclick="editarVeiculo('${v.id}')">Editar</button>
+      <button class="btn-danger" onclick="deletarVeiculo('${v.id}')">Remover</button>
+    </div></td>` : ''}
+  </tr>`;
+}
+
+function rowDestaque(v) {
+  const foto = v.fotos_veiculos?.sort((a,b) => a.ordem - b.ordem)[0];
+  const imgHTML = foto ? `<img class="td-img" src="${foto.url}" alt="">` : `<div class="td-img-placeholder"><svg width="20" height="20" fill="none" stroke="#555" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/></svg></div>`;
+  const preco = v.preco ? `R$ ${Number(v.preco).toLocaleString('pt-BR')}` : 'Consulte';
+  return `<tr>
+    <td>${imgHTML}</td>
+    <td><strong>${v.marca}</strong> ${v.modelo}</td>
+    <td><span style="font-family:'Space Mono',monospace;font-size:12px;">${v.ano} · ${Number(v.km).toLocaleString('pt-BR')} km</span></td>
+    <td><span style="font-family:'Space Mono',monospace;">${preco}</span></td>
+    <td><div class="td-actions">
+      <button class="btn-secondary" style="padding:6px 10px;" onclick="editarVeiculo('${v.id}')">Editar</button>
+      <button class="btn-danger" onclick="removerDestaque('${v.id}')">Remover destaque</button>
+    </div></td>
+  </tr>`;
+}
+
+function emptyRow(cols, msg = 'Nenhum veículo encontrado') {
+  return `<tr><td colspan="${cols}"><div class="empty-state"><svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg><p>${msg}</p></div></td></tr>`;
+}
+
+// ══ MODAL ══
+function openModalNovo(categoria = 'normal') {
+  editingId = null;
+  fotosParaUpload = [];
+  fotosExistentes = [];
+  document.getElementById('modalTitle').textContent = 'Novo Veículo';
+  document.getElementById('veiculoModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  // reset form
+  ['marca','modelo','ano','km','cor','motor','potencia','cambio','badge','descricao','opcionais'].forEach(f => document.getElementById('f-'+f).value = '');
+  document.getElementById('f-preco').value = '';
+  document.getElementById('f-preco-troca').value = '';
+  document.getElementById('f-combustivel').value = 'Gasolina';
+  document.getElementById('f-categoria').value = categoria;
+  document.getElementById('f-destaque').checked = false;
+  document.getElementById('f-hero').checked = false;
+  document.getElementById('f-blindado').checked = false;
+  document.getElementById('f-exibir-preco').checked = true;
+  document.getElementById('fotosPreview').innerHTML = '';
+}
+
+async function editarVeiculo(id) {
+  editingId = id;
+  fotosParaUpload = [];
+  const { data: v } = await sb.from('veiculos').select('*, fotos_veiculos(id, url, ordem)').eq('id', id).single();
+  if (!v) return;
+
+  document.getElementById('modalTitle').textContent = 'Editar Veículo';
+  document.getElementById('f-marca').value = v.marca || '';
+  document.getElementById('f-modelo').value = v.modelo || '';
+  document.getElementById('f-ano').value = v.ano || '';
+  document.getElementById('f-km').value = v.km || '';
+  document.getElementById('f-cor').value = v.cor || '';
+  document.getElementById('f-motor').value = v.motor || '';
+  document.getElementById('f-potencia').value = v.potencia || '';
+  document.getElementById('f-cambio').value = v.cambio || '';
+  document.getElementById('f-badge').value = v.badge || '';
+  document.getElementById('f-preco').value = v.preco || '';
+  document.getElementById('f-preco-troca').value = v.preco_com_troca || '';
+  document.getElementById('f-combustivel').value = v.combustivel || 'Gasolina';
+  document.getElementById('f-categoria').value = v.categoria || 'normal';
+  document.getElementById('f-destaque').checked = v.destaque || false;
+  document.getElementById('f-hero').checked = v.destaque_hero || false;
+  document.getElementById('f-blindado').checked = v.blindado || false;
+  document.getElementById('f-exibir-preco').checked = v.exibir_preco !== false;
+  document.getElementById('f-descricao').value = v.descricao || '';
+  document.getElementById('f-opcionais').value = v.opcionais ? v.opcionais.join('\n') : '';
+
+  // show existing photos
+  fotosExistentes = v.fotos_veiculos || [];
+  const preview = document.getElementById('fotosPreview');
+  preview.innerHTML = fotosExistentes.map(f => `
+    <div class="foto-thumb-wrap">
+      <img class="foto-thumb" src="${f.url}" alt="">
+      <button class="remove-foto" onclick="removerFotoExistente('${f.id}')">✕</button>
+    </div>`).join('');
+
+  document.getElementById('veiculoModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  document.getElementById('veiculoModal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function previewFotos(input) {
+  const preview = document.getElementById('fotosPreview');
+  const existingHTML = fotosExistentes.map(f => `
+    <div class="foto-thumb-wrap">
+      <img class="foto-thumb" src="${f.url}" alt="">
+      <button class="remove-foto" onclick="removerFotoExistente('${f.id}')">✕</button>
+    </div>`).join('');
+
+  const newHTML = Array.from(input.files).map((file, i) => {
+    const url = URL.createObjectURL(file);
+    return `<div class="foto-thumb-wrap"><img class="foto-thumb" src="${url}" alt=""></div>`;
+  }).join('');
+
+  fotosParaUpload = Array.from(input.files);
+  preview.innerHTML = existingHTML + newHTML;
+}
+
+async function removerFotoExistente(fotoId) {
+  await sb.from('fotos_veiculos').delete().eq('id', fotoId);
+  fotosExistentes = fotosExistentes.filter(f => f.id !== fotoId);
+  const preview = document.getElementById('fotosPreview');
+  preview.innerHTML = fotosExistentes.map(f => `
+    <div class="foto-thumb-wrap">
+      <img class="foto-thumb" src="${f.url}" alt="">
+      <button class="remove-foto" onclick="removerFotoExistente('${f.id}')">✕</button>
+    </div>`).join('');
+  showToast('Foto removida', 'success');
+}
+
+// ══ SALVAR ══
+async function salvarVeiculo() {
+  const btn = document.getElementById('btnSalvar');
+  btn.textContent = 'Salvando...';
+  btn.disabled = true;
+
+  const opcionaisRaw = document.getElementById('f-opcionais').value;
+  const opcionais = opcionaisRaw.split('\n').map(s => s.trim()).filter(Boolean);
+
+  const payload = {
+    marca:           document.getElementById('f-marca').value,
+    modelo:          document.getElementById('f-modelo').value,
+    ano:             parseInt(document.getElementById('f-ano').value),
+    km:              parseInt(document.getElementById('f-km').value),
+    combustivel:     document.getElementById('f-combustivel').value,
+    cor:             document.getElementById('f-cor').value,
+    motor:           document.getElementById('f-motor').value,
+    potencia:        document.getElementById('f-potencia').value,
+    cambio:          document.getElementById('f-cambio').value,
+    badge:           document.getElementById('f-badge').value,
+    preco:           parseFloat(document.getElementById('f-preco').value) || null,
+    preco_com_troca: parseFloat(document.getElementById('f-preco-troca').value) || null,
+    exibir_preco:    document.getElementById('f-exibir-preco').checked,
+    descricao:       document.getElementById('f-descricao').value,
+    opcionais:       opcionais,
+    categoria:       document.getElementById('f-categoria').value,
+    destaque:        document.getElementById('f-destaque').checked,
+    destaque_hero:   document.getElementById('f-hero').checked,
+    blindado:        document.getElementById('f-blindado').checked,
+    ativo:           true,
+  };
+
+  let veiculoId = editingId;
+
+  if (editingId) {
+    const { error } = await sb.from('veiculos').update(payload).eq('id', editingId);
+    if (error) { showToast('Erro ao salvar: ' + error.message, 'error'); btn.textContent = 'Salvar veículo'; btn.disabled = false; return; }
+  } else {
+    const { data, error } = await sb.from('veiculos').insert(payload).select().single();
+    if (error) { showToast('Erro ao criar: ' + error.message, 'error'); btn.textContent = 'Salvar veículo'; btn.disabled = false; return; }
+    veiculoId = data.id;
+  }
+
+  // Upload fotos
+  for (let i = 0; i < fotosParaUpload.length; i++) {
+    const file = fotosParaUpload[i];
+    const ext = file.name.split('.').pop();
+    const path = `${veiculoId}/${Date.now()}-${i}.${ext}`;
+    const { data: uploadData, error: uploadError } = await sb.storage.from('fotos-veiculos').upload(path, file, { upsert: true });
+    if (!uploadError) {
+      const { data: urlData } = sb.storage.from('fotos-veiculos').getPublicUrl(path);
+      await sb.from('fotos_veiculos').insert({ veiculo_id: veiculoId, url: urlData.publicUrl, ordem: fotosExistentes.length + i });
+    }
+  }
+
+  showToast(editingId ? 'Veículo atualizado!' : 'Veículo criado!', 'success');
+  closeModal();
+  loadDashboard();
+  loadVeiculos();
+  btn.textContent = 'Salvar veículo';
+  btn.disabled = false;
+}
+
+async function deletarVeiculo(id) {
+  if (!confirm('Remover este veículo do site?')) return;
+  await sb.from('veiculos').update({ ativo: false }).eq('id', id);
+  showToast('Veículo removido', 'success');
+  loadDashboard();
+  loadVeiculos();
+}
+
+async function removerDestaque(id) {
+  await sb.from('veiculos').update({ destaque: false }).eq('id', id);
+  showToast('Removido dos destaques', 'success');
+  loadDestaques();
+}
+
+async function salvarHeroSlot(index, slideId) {
+  const veiculoId = document.getElementById(`hero-select-${index}`).value;
+  const tag = document.getElementById(`hero-tag-${index}`).value;
+
+  if (slideId) {
+    await sb.from('hero_slides').update({ veiculo_id: veiculoId || null, tag, ordem: index }).eq('id', slideId);
+  } else {
+    await sb.from('hero_slides').insert({ veiculo_id: veiculoId || null, tag, ordem: index, ativo: true });
+  }
+  showToast(`Slide ${index+1} atualizado!`, 'success');
+  loadHero();
+}
+
+// ══ TOAST ══
+function showToast(msg, type = 'success') {
+  const toast = document.getElementById('toast');
+  document.getElementById('toastMsg').textContent = msg;
+  toast.className = `toast ${type}`;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 3500);
+}
+
+// ESC fecha modal
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+document.getElementById('veiculoModal').addEventListener('click', e => {
+  if (e.target === document.getElementById('veiculoModal')) closeModal();
+});
+</script>
+</body>
+</html>
