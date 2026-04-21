@@ -178,7 +178,33 @@ nav a:hover { color:var(--white); }
 }
 .search-inner button:hover { background:#ddd; }
 
-/* ══ SECTION COMMONS ══ */
+/* ══ FILTER BAR ══ */
+#filtros {
+  background:var(--bg2); padding:16px 56px;
+  border-bottom:1px solid var(--border);
+  display:flex; gap:12px; align-items:center; flex-wrap:wrap;
+}
+.filter-label {
+  font-size:10px; font-weight:600; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--gray); white-space:nowrap;
+}
+.filter-select {
+  background:var(--bg3); border:1px solid var(--border2);
+  border-radius:6px; padding:8px 14px; color:var(--white);
+  font-family:'Barlow',sans-serif; font-size:13px; font-weight:300;
+  outline:none; cursor:pointer; transition:border-color .25s;
+}
+.filter-select:focus { border-color:rgba(255,255,255,.4); }
+.filter-select option { background:var(--bg3); }
+.filter-divider { width:1px; height:24px; background:var(--border); }
+.btn-filter-clear {
+  background:none; border:1px solid var(--border2); color:var(--gray);
+  font-family:'Barlow',sans-serif; font-size:10px; font-weight:600;
+  letter-spacing:.12em; text-transform:uppercase;
+  padding:8px 14px; border-radius:6px; cursor:pointer;
+  transition:border-color .25s, color .25s;
+}
+.btn-filter-clear:hover { border-color:var(--white); color:var(--white); }
 section { padding:80px 56px; }
 .sec-label {
   font-size:10px; font-weight:600; letter-spacing:0.22em;
@@ -269,10 +295,10 @@ section { padding:80px 56px; }
 .cc-info { padding:18px 20px; }
 .cc-brand {
   display:flex; align-items:center; gap:7px;
-  font-size:10px; font-weight:600; letter-spacing:.14em;
+  font-size:13px; font-weight:700; letter-spacing:.1em;
   text-transform:uppercase; color:var(--gray); margin-bottom:6px;
 }
-.cc-brand-dot { width:5px; height:5px; border-radius:50%; border:1px solid var(--gray2); }
+.cc-brand-dot { width:6px; height:6px; border-radius:50%; border:1px solid var(--gray2); }
 .cc-name {
   font-family:'Barlow Condensed',sans-serif;
   font-size:20px; font-weight:700; text-transform:uppercase; line-height:1.1;
@@ -665,6 +691,7 @@ footer {
   nav{display:none;}
   section{padding:60px 20px;}
   #busca{padding:18px 20px;}
+  #filtros{padding:14px 20px; gap:10px;}
   .hs-content{padding:0 24px 36px;}
   .cars-grid{grid-template-columns:1fr !important;}
   .about-grid,.loc-grid,.footer-top{grid-template-columns:1fr;}
@@ -680,7 +707,7 @@ footer {
 <body>
 
 <!-- WPP Float -->
-<a href="https://wa.me/5551999999999" class="wpp-float" target="_blank">
+<a href="https://wa.me/5551997181915" class="wpp-float" target="_blank">
   <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
 </a>
 
@@ -706,7 +733,7 @@ footer {
       <svg width="13" height="13" viewBox="0 0 24 24" fill="#000"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
       Elétricos
     </a>
-    <a href="https://instagram.com/motortrade" class="btn-eletricos" style="background:#E1306C;padding:8px 12px;" target="_blank">
+    <a href="https://instagram.com/motortradeveiculos" class="btn-eletricos" style="background:#E1306C;padding:8px 12px;" target="_blank">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="#fff"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
     </a>
   </div>
@@ -787,14 +814,40 @@ footer {
 <!-- ══ SEARCH ══ -->
 <div id="busca">
   <div class="search-inner">
-    <input type="text" placeholder="Busque por modelo, marca ou ano…">
-    <button>
+    <input type="text" placeholder="Busque por modelo, marca ou ano…" oninput="aplicarFiltros()">
+    <button onclick="aplicarFiltros()">
       <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
     </button>
   </div>
 </div>
 
-<!-- ══ DESTAQUES ══ -->
+<!-- ══ FILTROS ══ -->
+<div id="filtros">
+  <span class="filter-label">Ordenar por:</span>
+  <select class="filter-select" id="filtroOrdem" onchange="aplicarFiltros()">
+    <option value="">Mais recentes</option>
+    <option value="ano_asc">Ano (Menor → Maior)</option>
+    <option value="ano_desc">Ano (Maior → Menor)</option>
+    <option value="preco_asc">Preço (Menor → Maior)</option>
+    <option value="preco_desc">Preço (Maior → Menor)</option>
+  </select>
+  <div class="filter-divider"></div>
+  <span class="filter-label">Ano:</span>
+  <select class="filter-select" id="filtroAno" onchange="aplicarFiltros()">
+    <option value="">Todos</option>
+  </select>
+  <div class="filter-divider"></div>
+  <span class="filter-label">Preço:</span>
+  <select class="filter-select" id="filtroPreco" onchange="aplicarFiltros()">
+    <option value="">Todos</option>
+    <option value="0-100000">Até R$ 100.000</option>
+    <option value="100000-200000">R$ 100k – R$ 200k</option>
+    <option value="200000-400000">R$ 200k – R$ 400k</option>
+    <option value="400000-700000">R$ 400k – R$ 700k</option>
+    <option value="700000-99999999">Acima de R$ 700k</option>
+  </select>
+  <button class="btn-filter-clear" onclick="limparFiltros()">✕ Limpar filtros</button>
+</div>
 <section id="destaques">
   <div class="sec-header reveal">
     <div>
@@ -861,7 +914,7 @@ footer {
     <span class="sec-label">Compra e venda</span>
     <h2 class="sec-title">Quer vender<br>seu veículo?</h2>
     <p>Avaliamos com transparência e as melhores condições do mercado. Rápido, seguro e sem burocracia.</p>
-    <a href="https://wa.me/5551999999999" class="btn-pill" target="_blank">Falar no WhatsApp →</a>
+    <a href="https://wa.me/5551997181915" class="btn-pill" target="_blank">Falar no WhatsApp →</a>
   </div>
 </div>
 
@@ -919,15 +972,15 @@ footer {
     <p>Acompanhe novidades, lançamentos e bastidores</p>
   </div>
   <div class="redes-links reveal">
-    <a href="#" class="soc-link" style="border-color:#E1306C;color:#E1306C;">
+    <a href="https://instagram.com/motortradeveiculos" class="soc-link" style="border-color:#E1306C;color:#E1306C;">
       <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
       Instagram
     </a>
-    <a href="https://wa.me/5551999999999" class="soc-link" style="border-color:#25D366;color:#25D366;" target="_blank">
+    <a href="https://wa.me/5551997181915" class="soc-link" style="border-color:#25D366;color:#25D366;" target="_blank">
       <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
       WhatsApp
     </a>
-    <a href="#" class="soc-link" style="border-color:#1877F2;color:#1877F2;">
+    <a href="https://web.facebook.com/motortradeveiculos" class="soc-link" style="border-color:#1877F2;color:#1877F2;">
       <svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
       Facebook
     </a>
@@ -941,7 +994,7 @@ footer {
   <h2 class="sec-title reveal">Encontre o carro ideal<br>com quem entende</h2>
   <p class="reveal">Atendimento especializado, estoque selecionado e as melhores condições em Porto Alegre.</p>
   <div class="cta-btns reveal">
-    <a href="https://wa.me/5551999999999" class="btn-pill" target="_blank">
+    <a href="https://wa.me/5551997181915" class="btn-pill" target="_blank">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
       Entrar em Contato
     </a>
@@ -1092,7 +1145,7 @@ const vehicles = {
       'Cronômetro Sport Chrono em Verde Lizard',
       'Saias laterais SportDesign',
     ],
-    wpp: 'https://wa.me/5551999999999?text=Olá! Tenho interesse no Porsche 911 Carrera S 2020. Pode me dar mais informações?'
+    wpp: 'https://wa.me/5551997181915?text=Olá! Tenho interesse no Porsche 911 Carrera S 2020. Pode me dar mais informações?'
   }
 };
 
@@ -1344,19 +1397,80 @@ function renderCard(v) {
     </div>`;
 }
 
+// ══ FILTROS E BUSCA ══
+let todosVeiculos = [];
+let todosDestaques = [];
+
 async function loadDestaques() {
   const { data } = await sb.from('veiculos').select('*, fotos_veiculos(url, ordem)').eq('destaque', true).eq('ativo', true).order('created_at', { ascending: false }).limit(4);
+  todosDestaques = data || [];
   const grid = document.getElementById('destaquesGrid');
-  if (!data || data.length === 0) { grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:48px;color:var(--gray2)">Nenhum destaque cadastrado</div>'; return; }
-  grid.innerHTML = data.map(renderCard).join('');
+  if (!todosDestaques.length) { grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:48px;color:var(--gray2)">Nenhum destaque cadastrado</div>'; return; }
+  grid.innerHTML = todosDestaques.map(renderCard).join('');
   initReveal();
 }
 
 async function loadEstoque() {
   const { data } = await sb.from('veiculos').select('*, fotos_veiculos(url, ordem)').eq('ativo', true).eq('destaque', false).order('created_at', { ascending: false });
+  todosVeiculos = data || [];
+  popularFiltroAnos(todosVeiculos);
+  renderEstoque(todosVeiculos);
+}
+
+function popularFiltroAnos(veiculos) {
+  const anos = [...new Set(veiculos.map(v => v.ano))].sort((a,b) => b - a);
+  const sel = document.getElementById('filtroAno');
+  sel.innerHTML = '<option value="">Todos</option>' + anos.map(a => `<option value="${a}">${a}</option>`).join('');
+}
+
+function aplicarFiltros() {
+  const busca = document.querySelector('.search-inner input').value.toLowerCase().trim();
+  const ordem = document.getElementById('filtroOrdem').value;
+  const ano   = document.getElementById('filtroAno').value;
+  const preco = document.getElementById('filtroPreco').value;
+
+  let resultado = [...todosVeiculos];
+
+  // busca textual
+  if (busca) {
+    resultado = resultado.filter(v =>
+      `${v.marca} ${v.modelo} ${v.ano} ${v.combustivel}`.toLowerCase().includes(busca)
+    );
+  }
+
+  // filtro ano
+  if (ano) resultado = resultado.filter(v => String(v.ano) === ano);
+
+  // filtro preço
+  if (preco) {
+    const [min, max] = preco.split('-').map(Number);
+    resultado = resultado.filter(v => v.preco && v.preco >= min && v.preco <= max);
+  }
+
+  // ordenação
+  if (ordem === 'ano_asc')    resultado.sort((a,b) => a.ano - b.ano);
+  if (ordem === 'ano_desc')   resultado.sort((a,b) => b.ano - a.ano);
+  if (ordem === 'preco_asc')  resultado.sort((a,b) => (a.preco||0) - (b.preco||0));
+  if (ordem === 'preco_desc') resultado.sort((a,b) => (b.preco||0) - (a.preco||0));
+
+  renderEstoque(resultado);
+}
+
+function limparFiltros() {
+  document.querySelector('.search-inner input').value = '';
+  document.getElementById('filtroOrdem').value = '';
+  document.getElementById('filtroAno').value = '';
+  document.getElementById('filtroPreco').value = '';
+  renderEstoque(todosVeiculos);
+}
+
+function renderEstoque(veiculos) {
   const grid = document.getElementById('estoqueGrid');
-  if (!data || data.length === 0) { grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:48px;color:var(--gray2)">Nenhum veículo no estoque</div>'; return; }
-  grid.innerHTML = data.map(renderCard).join('');
+  if (!veiculos.length) {
+    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:48px;color:var(--gray2);font-size:13px;">Nenhum veículo encontrado</div>';
+    return;
+  }
+  grid.innerHTML = veiculos.map(renderCard).join('');
   initReveal();
 }
 
@@ -1382,7 +1496,7 @@ async function openModalDynamic(id) {
     ],
     desc: descParagrafos,
     opts: v.opcionais || [],
-    wpp: `https://wa.me/5551999999999?text=Olá! Tenho interesse no ${v.marca} ${v.modelo} ${v.ano}.`
+    wpp: `https://wa.me/5551997181915?text=Olá! Tenho interesse no ${v.marca} ${v.modelo} ${v.ano}.`
   };
   document.getElementById('modalBrand').textContent = currentVehicle.brand;
   document.getElementById('modalName').textContent = currentVehicle.name;
