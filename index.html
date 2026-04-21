@@ -821,6 +821,24 @@ footer {
   </div>
 </div>
 
+<section id="destaques">
+  <div class="sec-header reveal">
+    <div>
+      <span class="sec-label">Seleção especial</span>
+      <h2 class="sec-title">Destaques</h2>
+    </div>
+    <a href="#estoque" class="ver-todos">Ver estoque completo →</a>
+  </div>
+  <div class="cars-grid" id="destaquesGrid">
+    <div style="grid-column:1/-1;text-align:center;padding:48px;color:var(--gray2);font-size:13px;">
+      <div style="display:inline-block;width:20px;height:20px;border:2px solid var(--border2);border-top-color:var(--white);border-radius:50%;animation:spin .7s linear infinite;margin-bottom:12px;"></div>
+      <div>Carregando veículos...</div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
 <!-- ══ FILTROS ══ -->
 <div id="filtros">
   <span class="filter-label">Ordenar por:</span>
@@ -848,24 +866,6 @@ footer {
   </select>
   <button class="btn-filter-clear" onclick="limparFiltros()">✕ Limpar filtros</button>
 </div>
-<section id="destaques">
-  <div class="sec-header reveal">
-    <div>
-      <span class="sec-label">Seleção especial</span>
-      <h2 class="sec-title">Destaques</h2>
-    </div>
-    <a href="#estoque" class="ver-todos">Ver estoque completo →</a>
-  </div>
-  <div class="cars-grid" id="destaquesGrid">
-    <!-- carregado dinamicamente do Supabase -->
-    <div style="grid-column:1/-1;text-align:center;padding:48px;color:var(--gray2);font-size:13px;">
-      <div style="display:inline-block;width:20px;height:20px;border:2px solid var(--border2);border-top-color:var(--white);border-radius:50%;animation:spin .7s linear infinite;margin-bottom:12px;"></div>
-      <div>Carregando veículos...</div>
-    </div>
-  </div>
-</section>
-
-<div class="section-divider"></div>
 
 <!-- ══ ESTOQUE GERAL ══ -->
 <section id="estoque">
@@ -881,7 +881,6 @@ footer {
       <div style="display:inline-block;width:20px;height:20px;border:2px solid var(--border2);border-top-color:var(--white);border-radius:50%;animation:spin .7s linear infinite;margin-bottom:12px;"></div>
       <div>Carregando estoque...</div>
     </div>
-  </div>
   </div>
 </section>
 
@@ -936,14 +935,14 @@ footer {
           <div class="loc-icon"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
           <div class="loc-row-content">
             <strong>Horário de Funcionamento</strong>
-            <p>Seg a Sex: 9h às 19h &nbsp;|&nbsp; Sáb: 9h às 17h<br>Domingo: Fechado</p>
+            <p>Seg a Sex: 9h às 12h — 13h30 às 18h<br>Sáb: 9h às 12h &nbsp;|&nbsp; Domingo: Fechado</p>
           </div>
         </div>
         <div class="loc-row">
           <div class="loc-icon"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013 6.18 2 2 0 014.11 4.13l3.09-.78a1 1 0 011.07.5l1.38 3.09a1 1 0 01-.29 1.17L8 9.22A16 16 0 0014.78 16l1.11-1.36a1 1 0 011.17-.29l3.09 1.38a1 1 0 01.85 1.19z"/></svg></div>
           <div class="loc-row-content">
-            <strong>WhatsApp</strong>
-            <p>(51) 9 9999-9999</p>
+            <strong>Telefone / WhatsApp</strong>
+            <p>(51) 3533-3537 &nbsp;|&nbsp; (51) 9 9718-1915</p>
           </div>
         </div>
       </div>
@@ -1019,7 +1018,8 @@ footer {
     </div>
     <div class="fc">
       <h4>Contato</h4>
-      <a href="tel:+5551999999999">(51) 9 9999-9999</a>
+      <a href="tel:+555135333537">(51) 3533-3537</a>
+      <a href="tel:+5551997181915">(51) 9 9718-1915</a>
       <a href="/cdn-cgi/l/email-protection#5a3935342e3b2e351a37352e35282e283b3e3f74393537743828"><span class="__cf_email__" data-cfemail="1f7c70716b7e6b705f72706b706d6b6d7e7b7a317c7072317d6d">[email&#160;protected]</span></a>
       <a href="#">Rua 18 de novembro, 135</a>
       <a href="#">Navegantes — Porto Alegre/RS</a>
